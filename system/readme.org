@@ -1,0 +1,49 @@
+** Setup
+Installing dependencies
+#+begin_src shell
+$ julia --project=.
+# in julia interactive env
+pkg> dev --local
+#+end_src
+
+
+Running
+#+begin_src shell
+$ julia --project=. src/main.jl
+#+end_src
+
+Testing
+#+begin_src shell
+$ julia --project=. test/runtests.jl
+#+end_src
+
+
+** Usage
+`main.jl` provide a simple command-line-interface
+
+#+begin_src shell
+================ ClientCLI ===================
+----------------------------------------------
+/new
+  #doc Re-construct a new System
+  #args DataType[Integer, Integer, Integer]
+
+/add
+  #doc Add a number of records to Store
+  #args Integer
+
+/get
+  #doc Get a single record by its ID
+  #args Integer
+
+/help
+  #showing this dialog
+
+/exit
+  #no description needed
+==============================================
+# waiting for user to type in command and arguments
+command /
+
+
+#+end_src
