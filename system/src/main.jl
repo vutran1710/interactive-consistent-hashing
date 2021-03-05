@@ -32,15 +32,14 @@ cli_handle = ClientCLI(
     "add" => (system.api__add_records, Integer),
 )
 
-write_socket = ws::HTTP.WebSockets.WebSocket ->
-    msg::ResponseMessage ->
-    println(
-        write(ws, serialize(msg)),
-        ">> Sent to WS >>",
-        String(readavailable(ws)),
-    )
+Alerts = Dict(
+    "new_client" => id -> "\n 🍑 New client attached: $(id)\n\n" * "command /",
+    "no_client" => _ -> "\n\n 💀 No web-socket clients\n\n",
+    "sent" => msg -> "\n 👌 Sent: $(msg)\n\n",
+)
 
-
-ClientWS(ws -> run_forever(cli_handle, after_cb=write_socket(ws)))
+notify = (key, args...) -> print(Alerts[key](args...))
+write_socket = ws -> message -> write(ws, serialize(message))
+ClientWS(ws -> run_forever(cli_handle, after_cb=write_socket(ws)), notify)
 
 end
