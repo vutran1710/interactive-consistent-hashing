@@ -16,7 +16,7 @@ include("utils.jl")
 
 logger = SimpleLogger()
 global_logger(logger)
-system = construct(10, 4, 3)
+system = construct(5, 2, 3)
 
 new_system(record_count, server_count, label_count) = begin
     system = construct(record_count, server_count, label_count)

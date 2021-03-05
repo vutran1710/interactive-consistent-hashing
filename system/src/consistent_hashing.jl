@@ -93,8 +93,8 @@ function construct(
     cache_hash_table = derive_server_labels(cache_table, number_of_labels)
 
     println("============== System Components ==============")
-    println("> Cache Hash Table ----------------------------")
-    print(cache_table)
+    println("> Cache IDs -----------------------------------")
+    print(cache_table.server)
     print("\n\n")
     println("> Cache Hash Table with derived Labels --------")
     print(cache_hash_table)
