@@ -1,21 +1,14 @@
-import { io } from "socket.io-client"
+const socket = new WebSocket('ws://localhost:8081')
 
-const p5 = window.p5
+socket.addEventListener('open', function(event) {
+  const msg = { sender: "app" }
+  socket.send(JSON.stringify(msg))
+})
 
-const s = sketch => {
+socket.addEventListener('message', function(event) {
+  console.log('Message from server ', event.data)
+})
 
-  let x = 100
-  let y = 100
-
-  sketch.setup = () => {
-    sketch.createCanvas(200, 200)
-  }
-
-  sketch.draw = () => {
-    sketch.background(0)
-    sketch.fill(255)
-    sketch.rect(x, y, 50, 50)
-  }
-}
-
-new p5(s)
+socket.addEventListener('close', function(event) {
+  console.log('The connection has been closed')
+})

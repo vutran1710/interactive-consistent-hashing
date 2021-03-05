@@ -43,7 +43,9 @@ function cli_render_introduction(cmd_maps)
 end
 
 
-function arg_converter(type, arg)
+function arg_converter(args::Tuple)
+    type, arg = args
+
     if type == Integer
         return parse(Int64, arg)
     end
@@ -101,11 +103,12 @@ function ClientCLI(args...)
 
         println("~~~~~~~~~~~~~~~ BEGIN")
         handler = cmd_dict[cmd]
-        func, type, args = handler["func"], handler["type"], nothing
+        func, type = handler["func"], handler["type"]
 
         try
-            args = map(r -> arg_converter(r...), zip(type, args))
-        catch
+            args = map(arg_converter, zip(type, args))
+        catch e
+            @error e
             @error "Invalid command arguments"
             return ResponseMessage(nothing, USER_ERROR)
         end

@@ -40,14 +40,16 @@ Alerts = Dict(
 notify = (key, args...) -> print(Alerts[key](args...))
 
 write_socket = ws -> msg -> begin
-    if msg == nothing
+    if !(msg isa ResponseMessage)
         # NOTE: cli-command return nothing due to special command input
         return
     end
 
-    if msg.message ∉ (USER_ERROR, SYSTEM_ERROR)
-        write(ws, serialize(message))
+    if msg.message ∈ (USER_ERROR, SYSTEM_ERROR)
+        return
     end
+
+    write(ws, serialize(msg))
 end
 
 
