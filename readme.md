@@ -1,27 +1,42 @@
-** Setup
-Installing dependencies
-#+begin_src shell
+# Interactive Consistent Hashing
+banner placed
+
+## Prelude
+- How/Why/When/What?
+
+## Introdution
+- design goal
+- overall design
+- technical breakdown
+
+## Running
+### Setup
+#### System/Backend
+Written in **Julia**
+
+- Installing dependencies
+```shell
 $ julia --project=.
 # in julia interactive env
 pkg> dev --local
-#+end_src
+```
 
 
-Running
-#+begin_src shell
+- Running
+```shell
 $ julia --project=. src/main.jl
-#+end_src
+```
 
-Testing
-#+begin_src shell
+- Testing
+```shell
 $ julia --project=. test/runtests.jl
-#+end_src
+```
 
 
-** Usage
+- Usage
 `main.jl` provide a simple command-line-interface
 
-#+begin_src shell
+```shell
 ================ ClientCLI ===================
 ----------------------------------------------
 /new
@@ -45,5 +60,4 @@ $ julia --project=. test/runtests.jl
 # waiting for user to type in command and arguments
 command /
 
-
-#+end_src
+```

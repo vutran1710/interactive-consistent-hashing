@@ -1,24 +1,19 @@
-const {
-  createCanvas,
-  mouseIsPressed,
-  fill,
-  ellipse,
-  mouseX,
-  mouseY,
-} = window.p5
+const p5 = window.p5
 
+const s = sketch => {
 
-const setup = () => createCanvas(400, 400)
+  let x = 100
+  let y = 100
 
-const draw = () => {
-  if (mouseIsPressed) {
-    fill(0)
-  } else {
-    fill(255)
+  sketch.setup = () => {
+    sketch.createCanvas(200, 200)
   }
-  ellipse(mouseX, mouseY, 80, 80)
+
+  sketch.draw = () => {
+    sketch.background(0)
+    sketch.fill(255)
+    sketch.rect(x, y, 50, 50)
+  }
 }
 
-
-setup()
-draw()
+new p5(s)
