@@ -13,7 +13,7 @@ include("structs.jl")
 include("consistent_hashing.jl")
 include("cli.jl")
 include("ws.jl")
-
+include("utils.jl")
 
 logger = SimpleLogger()
 global_logger(logger)
@@ -33,11 +33,14 @@ cli_handle = ClientCLI(
     "add" => (system.api__add_records, Integer),
 )
 
-write_socket = ws -> msg::ResponseMessage -> begin
-    x = Dict("sender" => "server", "payload" => msg.data)
-    write(ws, JSON.json(x))
-    println(">> Sent to WS >>")
-end
+write_socket = ws::HTTP.WebSockets.WebSocket ->
+    msg::ResponseMessage ->
+    println(
+        write(ws, serialize(msg)),
+        ">> Sent to WS >>",
+        String(readavailable(ws)),
+    )
+
 
 ClientWS(ws -> run_forever(cli_handle, after_cb=write_socket(ws)))
 

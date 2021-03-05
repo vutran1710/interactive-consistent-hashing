@@ -5,6 +5,7 @@ RecordID = Integer
 
 # Constants & Enum ======================================
 @enum Message SUCCESS=1 NOT_FOUND SYSTEM_ERROR
+@enum Sender SERVER=1 CLIENT
 
 
 # Structs representing System parts  ====================
@@ -27,15 +28,15 @@ struct ResponseMessage
     message::Message
 end
 
+struct SocketMessage
+    sender::Sender
+    payload::Union{Dict, Array}
+end
+
 struct TheSystem
     api__get_record::Any
     api__add_records::Any
     inspect__cache_data::Any
     db::Database
     table::Table
-end
-
-struct Point
-    x::Float64
-    y::Float64
 end
