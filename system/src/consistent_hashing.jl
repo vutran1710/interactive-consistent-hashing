@@ -136,12 +136,13 @@ function construct(
         stop = start + number - 1
         new_records = create_records(start=start, stop=stop)
         add_records(new_records, db)
-        println(db.table)
+        println("Updated Table: $(length(db.table)) rows")
     end
 
     inspect__cache_data(cache_id::ServerID) = begin
         if !hashkey(cache_map, cache_id)
             @error "Cache-ID=$(cache_id) does not exist"
+            return nothing
         end
         cache_map[cache_id].bucket
     end
