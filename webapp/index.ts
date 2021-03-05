@@ -1,3 +1,5 @@
+import { io } from "socket.io-client"
+
 const p5 = window.p5
 
 const s = sketch => {

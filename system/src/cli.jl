@@ -145,10 +145,14 @@ function ClientCLI(args...)
         end
 
         args = map(r -> arg_converter(r...), zip(type, args))
-        @info func(args...)
+        result = func(args...)
+
+        @info result
         println("~~~~~~~~~~~~~~~ END")
+        return result
     end
 
-    insert_blank_lines = _ -> print("\n")
-    run_forever(handle; after_cb=insert_blank_lines)
+    # insert_blank_lines = _ -> print("\n")
+    # run_forever(handle; after_cb=insert_blank_lines)
+    return handle
 end
