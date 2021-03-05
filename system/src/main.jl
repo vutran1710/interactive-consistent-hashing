@@ -7,11 +7,12 @@ using UUIDs: uuid1
 using Faker: first_name, last_name
 using SplitApplyCombine: group
 using Colors
+using HTTP
 
 include("structs.jl")
 include("consistent_hashing.jl")
 include("cli.jl")
-include("socket_client.jl")
+include("ws.jl")
 
 
 logger = SimpleLogger()
