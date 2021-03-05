@@ -19,7 +19,7 @@ function ClientWS(f, noti)
             if sender == "SERVER" && !isempty(cws)
                 clients = collect(values(cws))
                 data = JSON.json(msg["data"])
-                foreach(w -> write(w, data), clients)
+                (w -> write(w, data).(clients))
                 noti("sent", data)
             end
         end

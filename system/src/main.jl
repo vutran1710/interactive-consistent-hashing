@@ -16,16 +16,15 @@ include("utils.jl")
 
 logger = SimpleLogger()
 global_logger(logger)
-system = construct(10, 4, 20)
+system = construct(10, 4, 3)
 
-new_system(record_count::Integer, server_count::Integer, label_count::Integer) = begin
+new_system(record_count, server_count, label_count) = begin
     system = construct(record_count, server_count, label_count)
 end
 
-
 cli_handle = ClientCLI(
     "Construct/re-construct a new System",
-    "new" => (new_system, [Integer, Integer, Integer]),
+    "new" => (new_system, Integer, Integer, Integer),
     "Get a single record by its ID",
     "get" => (system.api__get_record, Integer),
     "Add a number of records to Store",
@@ -39,7 +38,19 @@ Alerts = Dict(
 )
 
 notify = (key, args...) -> print(Alerts[key](args...))
-write_socket = ws -> message -> write(ws, serialize(message))
+
+write_socket = ws -> msg -> begin
+    if msg == nothing
+        # NOTE: cli-command return nothing due to special command input
+        return
+    end
+
+    if msg.message ∉ (USER_ERROR, SYSTEM_ERROR)
+        write(ws, serialize(message))
+    end
+end
+
+
 ClientWS(ws -> run_forever(cli_handle, after_cb=write_socket(ws)), notify)
 
 end

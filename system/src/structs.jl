@@ -4,7 +4,7 @@ ServerID = String
 RecordID = Integer
 
 # Constants & Enum ======================================
-@enum Message SUCCESS=1 NOT_FOUND SYSTEM_ERROR
+@enum Message SUCCESS=1 NOT_FOUND SYSTEM_ERROR USER_ERROR
 @enum Sender SERVER=1 CLIENT
 
 
