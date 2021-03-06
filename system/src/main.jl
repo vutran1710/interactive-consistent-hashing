@@ -1,12 +1,13 @@
 module main
-using Logging
-using JSON
-using TypedTables
-using PrettyPrinting
-using UUIDs: uuid1
 using Faker: first_name, last_name
-using SplitApplyCombine: group
 using HTTP
+using JSON
+using Logging
+using PrettyPrinting
+using SplitApplyCombine: group
+using StatsBase: sample
+using TypedTables
+using UUIDs: uuid1
 
 include("structs.jl")
 include("consistent_hashing.jl")
@@ -19,6 +20,10 @@ global_logger(logger)
 system = construct(5, 2, 3)
 
 new_system(record_count, server_count, label_count) = begin
+    if label_count * server_count > 360
+        @error "Number of server-labels cannot be larger than 360"
+        return
+    end
     system = construct(record_count, server_count, label_count)
 end
 

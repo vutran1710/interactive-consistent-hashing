@@ -3,13 +3,11 @@ function create_records(; start::Integer=1, stop::Integer=1000)::Array{Record}
     (t -> Record(t...)).(data)
 end
 
-
 function init_db(r::Array{Record})::Database
     ids = getproperty(:id).(r)
     names = getproperty(:name).(r)
     Database(Table(id=ids, name=names))
 end
-
 
 function add_records(records::Array{Record}, db::Database)
     for r in records
@@ -18,18 +16,15 @@ function add_records(records::Array{Record}, db::Database)
     end
 end
 
-
 function create_cache_servers(num::Integer)::Array{CacheServer}
     id() = string(uuid1())[end-5:end]
     create_server(_) = CacheServer(id(), Dict())
     create_server.(1:num)
 end
 
-
 function hashing(number::Integer)::Angle
     mod(number, 360)
 end
-
 
 function pin_servers(servers::Array{CacheServer})::Table
     """ Pin servers' points over the hashing-ring randomly
@@ -39,41 +34,30 @@ function pin_servers(servers::Array{CacheServer})::Table
     Table(server=ids, angle=angles)
 end
 
-
 function locate_cache(hashed::Angle, server_table::Table)::ServerID
     """ We find the nearest cache-id in the counter-clockwise direction
     whose angle is greater than the hashed
     """
-    online_servers = server_table[server_table.online .== true]
-    servers = map(r -> (r.angle, r.server), online_servers)
-    sort!(servers, by=first)
-    idx = findfirst(g -> g[1] >= hashed, servers)
-    idx != nothing ? servers[idx][2] : servers[1][2]
+    online_only = server_table[server_table.online .== true]
+    servers = online_only[online_only.angle .>= hashed]
+    (length(servers) > 0 ? servers[1] : server_table[1]).server
 end
 
-
 function derive_server_labels(server_table::Table, label_count::Integer)::Table
+    """ From the basic server-hash-table, derive more labels
+    over the Ring
+    """
     server_count = length(server_table)
-    chars = Iterators.Stateful(('A':'Z')[begin:server_count])
-    flatmap(fmap, iter) = collect(Iterators.flatten(map(fmap, iter)))
-
-    derive_labels(row) = begin
-        char = popfirst!(chars)
-        map(i -> char * repr(i), 1:label_count)
-    end
-
-    derive_angles(row) = rand(0:360, label_count)
-    repeat_server_id(row) = repeat([row.server], label_count)
-
-    labels = flatmap(derive_labels, server_table)
-    angles = flatmap(derive_angles, server_table)
-    ids = flatmap(repeat_server_id, server_table)
-    online = repeat([true], server_count * label_count)
-
+    chars = ('A':'Z')[begin:server_count]
+    labels = [char * string(i) for char=chars, i=1:label_count][:]
+    angles = sample(0:360, label_count * server_count, ordered=true, replace=false)
+    ids = repeat(server_table.server, label_count)
+    online = collect(trues(server_count * label_count))
     Table(label=labels, angle=angles, server=ids, online=online)
 end
 
-
+""" Construct the whole system with all neccessary components
+"""
 function construct(
     number_of_records::Integer,
     number_of_caches::Integer,
@@ -109,12 +93,12 @@ function construct(
         find = get(bucket, id, db.table[db.table.id .== id])
 
         if find isa Record
-            @info "Cache-hit"
+            @info "Cache-hit: $(hashed) -> $(cache_id)"
             return ResponseMessage(find, SUCCESS)
         end
 
         if length(find) > 0
-            @info "Cache-miss"
+            @info "Cache-miss: $(hashed) -> $(cache_id)"
             record = Record(id, find[1].name)
             push!(bucket, id => record)
             return ResponseMessage(record, SUCCESS)
