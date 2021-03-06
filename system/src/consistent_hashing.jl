@@ -124,7 +124,11 @@ function construct(
                 push!(bucket, id => Record(id, row.name))
             end
 
-            ResponseMessage(Record(row.id, row.name), status)
+            if row != nothing
+                ResponseMessage(Record(row.id, row.name), status)
+            else
+                ResponseMessage(nothing, status)
+            end
         else
             @info "Cache hit"
             ResponseMessage(bucket[id], SUCCESS)
@@ -139,13 +143,7 @@ function construct(
         println("Updated Table: $(length(db.table)) rows")
     end
 
-    inspect__cache_data(cache_id::ServerID) = begin
-        if !hashkey(cache_map, cache_id)
-            @error "Cache-ID=$(cache_id) does not exist"
-            return nothing
-        end
-        cache_map[cache_id].bucket
-    end
+    inspect__cache_data(cache_id::ServerID) = get(cache_map, cache_id, nothing)
 
     TheSystem(
         api__get_record,
