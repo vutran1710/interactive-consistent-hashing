@@ -112,27 +112,21 @@ function construct(
         cache_id = locate_cache(hashed, cache_hash_table)
         cache_server = cache_map[cache_id]
         bucket = cache_server.bucket
+        find = get(bucket, id, db.table[db.table.id .== id])
 
-        if !haskey(bucket, id)
-            @info "Cache miss"
-            idx = findfirst(r -> r.id == id, db.table)
-            status = idx != nothing ? SUCCESS : NOT_FOUND
-            row = idx != nothing ? db.table[idx] : nothing
-
-            if row != nothing
-                @info "Caching record_id=$(id) to $(cache_id)"
-                push!(bucket, id => Record(id, row.name))
-            end
-
-            if row != nothing
-                ResponseMessage(Record(row.id, row.name), status)
-            else
-                ResponseMessage(nothing, status)
-            end
-        else
-            @info "Cache hit"
-            ResponseMessage(bucket[id], SUCCESS)
+        if find isa Record
+            @info "Cache-hit"
+            return ResponseMessage(find, SUCCESS)
         end
+
+        if length(find) > 0
+            @info "Cache-miss"
+            record = Record(id, find[1].name)
+            push!(bucket, id => record)
+            return ResponseMessage(record, SUCCESS)
+        end
+
+        return ResponseMessage(nothing, NOT_FOUND)
     end
 
     api__add_records(number::Integer) = begin

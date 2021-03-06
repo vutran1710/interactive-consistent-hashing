@@ -2,6 +2,7 @@
 Angle = Float64
 ServerID = String
 RecordID = Integer
+Row = NamedTuple
 
 # Constants & Enum ======================================
 @enum Message SUCCESS=1 NOT_FOUND SYSTEM_ERROR USER_ERROR
