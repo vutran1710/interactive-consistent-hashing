@@ -32,7 +32,7 @@ cli_handle = ClientCLI(
 )
 
 Alerts = Dict(
-    "new_client" => id -> "\n 🍑 New client attached: $(id)\n\n" * "command /",
+    "new_client" => id -> "\n\n 🍑 New client attached: $(id)\n\n" * "command /",
     "no_client" => _ -> "\n\n 💀 No web-socket clients\n\n",
     "sent" => msg -> "\n 👌 Sent: $(msg)\n\n",
 )
