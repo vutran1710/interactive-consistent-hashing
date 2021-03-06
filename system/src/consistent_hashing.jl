@@ -1,17 +1,13 @@
 function create_records(; start::Integer=1, stop::Integer=1000)::Array{Record}
-    ids = Iterators.Stateful(start:stop)
-    id = () -> popfirst!(ids)
-    name = () -> "$(first_name()) $(last_name())"
-    create_record = _ -> Record(id(), name())
-    map(create_record, 1:(stop-start+1))
+    data = [(i, "$(first_name()) $(last_name())") for i=start:stop]
+    (t -> Record(t...)).(data)
 end
 
 
-function init_db(records::Array{Record})::Database
-    ids = map(getproperty(:id), records)
-    names = map(getproperty(:name), records)
-    table = Table(id=ids, name=names)
-    Database(table)
+function init_db(r::Array{Record})::Database
+    ids = getproperty(:id).(r)
+    names = getproperty(:name).(r)
+    Database(Table(id=ids, name=names))
 end
 
 
@@ -24,10 +20,9 @@ end
 
 
 function create_cache_servers(num::Integer)::Array{CacheServer}
-    ids = [string(uuid1())[end-5:end] for _=1:num]
-    id = () -> popfirst!(ids)
-    create_server = _ -> CacheServer(id(), Dict())
-    map(create_server, 1:num)
+    id() = string(uuid1())[end-5:end]
+    create_server(_) = CacheServer(id(), Dict())
+    create_server.(1:num)
 end
 
 
@@ -39,9 +34,8 @@ end
 function pin_servers(servers::Array{CacheServer})::Table
     """ Pin servers' points over the hashing-ring randomly
     """
-    count = length(servers)
-    ids = map(getproperty(:id), servers)
-    angles = rand(0:360, count)
+    ids = getproperty(:id).(servers)
+    angles = rand(0:360, length(servers))
     Table(server=ids, angle=angles)
 end
 
