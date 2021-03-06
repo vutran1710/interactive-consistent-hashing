@@ -88,8 +88,7 @@ function construct(
     api__get_record(id::RecordID) = begin
         hashed = hashing(id)
         cache_id = locate_cache(hashed, cache_hash_table)
-        cache_server = cache_map[cache_id]
-        bucket = cache_server.bucket
+        bucket = cache_map[cache_id].bucket
         find = get(bucket, id, db.table[db.table.id .== id])
 
         if find isa Record
@@ -97,7 +96,7 @@ function construct(
             return ResponseMessage(find, SUCCESS)
         end
 
-        if length(find) > 0
+        if !isempty(find)
             @info "Cache-miss: $(hashed) -> $(cache_id)"
             record = Record(id, find[1].name)
             push!(bucket, id => record)
