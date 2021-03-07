@@ -14,6 +14,21 @@ banner placed
 #### System/Backend
 Written in **Julia**
 
+##### Running inside Docker
+If you do not wish to install/use **julia**, you can run the app within Docker doing the following steps:
+1. Dockerizing the App
+- Tag the image with some name, eg: `ich` (which stands for *Iteractive-Consistent-Hashing*)
+```shell
+# docker build -t ich .
+```
+
+- Run the bastard! Don't forget to expose websocket port, if you want to enjoy the app visually
+```shell
+$ docker run -ti -p 8081:8081 ich
+```
+
+
+##### Running locally using Julia
 - Installing dependencies
 ```shell
 $ julia --project=.
@@ -22,11 +37,6 @@ pkg> dev --local
 ```
 
 
-- Running
-```shell
-$ julia --project=. src/main.jl
-```
-
 - Testing
 ```shell
 $ julia --project=. test/runtests.jl
@@ -34,7 +44,7 @@ $ julia --project=. test/runtests.jl
 
 
 - Usage
-`main.jl` provide a simple command-line-interface
+`src/consistent_hashing.jl` provide a simple command-line-interface
 
 ```shell
 ================ ClientCLI ===================
