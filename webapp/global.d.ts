@@ -1,8 +1,1 @@
-interface p5 {
-  createCanvas: Function;
-  mouseIsPressed: Boolean;
-  fill: Function;
-  ellipse: Function;
-  mouseX: Function;
-  mouseY: Function;
-}
+declare function p5(ctx: Function, element_id: string): object;
