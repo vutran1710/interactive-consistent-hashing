@@ -18,7 +18,7 @@ If you do not wish to install/use **julia**, you can run the app within Docker b
 
 1. Dockerizing the App, tag the image with some name, eg: `ich` (which stands for *Iteractive-Consistent-Hashing*)
 ```shell
-# docker build -t ich .
+$ docker build -t ich .
 ```
 
 2. Run the bastard! Don't forget to expose websocket port, if you want to enjoy the app visually
