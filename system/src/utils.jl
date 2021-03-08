@@ -21,5 +21,5 @@ function run_forever(exec; before_cb=nothing, after_cb=nothing, delay::Int=0)
 end
 
 function serialize(r::ResponseMessage)::String
-    JSON.json(Dict(:sender => SERVER, :data => r.data))
+    JSON.json(Dict(:sender => SERVER, :data => r.data, :type => r.action))
 end

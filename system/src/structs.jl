@@ -5,7 +5,7 @@ RecordID = Integer
 Row = NamedTuple
 
 # Constants & Enum ======================================
-@enum Message SUCCESS=1 NOT_FOUND SYSTEM_ERROR USER_ERROR
+@enum Status SUCCESS=1 NOT_FOUND SYSTEM_ERROR USER_ERROR
 @enum Sender SERVER=1 CLIENT
 
 
@@ -26,7 +26,8 @@ end
 
 struct ResponseMessage
     data::Any
-    message::Message
+    action::String
+    status::Status
 end
 
 struct SocketMessage

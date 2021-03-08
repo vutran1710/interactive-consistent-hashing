@@ -50,7 +50,7 @@ write_socket = ws -> msg -> begin
         return
     end
 
-    if msg.message ∈ (USER_ERROR, SYSTEM_ERROR)
+    if msg.status ∈ (USER_ERROR, SYSTEM_ERROR)
         return
     end
 
