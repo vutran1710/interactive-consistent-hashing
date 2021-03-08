@@ -1,3 +1,6 @@
+using HTTP
+
+
 make_websocket_server(authenticate, handler) = begin
     cws = Dict()
 
