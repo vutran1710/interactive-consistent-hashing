@@ -83,4 +83,8 @@ end
     @test r.id == rec.id
     @test r.name == rec.name
 
+    r = ctbl.get(key=200)
+    @test r == nothing
+
+    ctbl.get(key=2)
 end
