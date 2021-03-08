@@ -79,12 +79,12 @@ end
     rec = db.select_single(2)
     on_cache_miss = key -> db.select_single(key)
     ctbl = cache_init(4, 5, on_cache_miss)
-    r = ctbl.get(key=2)
+    r = ctbl.get(2)
     @test r.id == rec.id
     @test r.name == rec.name
 
-    r = ctbl.get(key=200)
+    r = ctbl.get(200)
     @test r == nothing
 
-    ctbl.get(key=2)
+    ctbl.get(2)
 end

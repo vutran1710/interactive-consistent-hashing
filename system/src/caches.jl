@@ -59,11 +59,7 @@ cache_init(
     cache_map = Dict((s.id => s) for s=caches)
     tbl = create_virtual_nodes(caches, number_of_labels_each_node)
 
-    __get(;key=nothing) = begin
-        if key == nothing
-            return nothing
-        end
-
+    __get(key::Integer) = begin
         hash = hashing(key)
         cache_id = find_cache_by_hash(hash, tbl)
         bucket = cache_map[cache_id].bucket

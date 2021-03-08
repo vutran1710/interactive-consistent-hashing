@@ -35,16 +35,8 @@ struct CacheTable
     get::Any
 end
 
-struct ResponseMessage
-    data::Any
-    action::String
-    status::Status
-end
-
-struct TheSystem
-    api__get_record::Any
-    api__add_records::Any
-    inspect__cache_data::Any
-    db::Database
-    table::Table
+struct App
+    get_record::Any
+    add_records::Any
+    fail_server::Any
 end
