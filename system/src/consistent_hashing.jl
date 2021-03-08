@@ -36,13 +36,25 @@ cli_handle = ClientCLI(
     "add" => (system.api__add_records, Integer),
 )
 
+on_client_attached(client_id, client_ws) = begin
+    alert = """
+🍑  New client attached: $(client_id)
+    Broadcast the current server hash-table...
+    """
+    ws = client_ws[client_id]
+    table_data = (r -> (r.label, r.angle, r.server, r.online)).(system.table)
+    message = serialize(ResponseMessage(table_data, "server_table", SUCCESS))
+    write(ws, message)
+    return alert
+end
+
 Alerts = Dict(
-    "new_client" => id -> "\n\n 🍑 New client attached: $(id)\n\n" * "command /",
-    "no_client" => _ -> "\n\n 💀 No web-socket clients\n\n",
-    "sent" => msg -> "\n 👌 Sent: $(msg)\n\n",
+    "new_client" => on_client_attached,
+    "no_client" => _ -> "\n\n💀 No web-socket clients\n\n",
+    "sent" => (msg, _) -> "\n👌 Sent: $(msg)\n\n",
 )
 
-notify = (key, args...) -> print(Alerts[key](args...))
+notify = (key, args...) -> @info Alerts[key](args...)
 
 write_socket = ws -> msg -> begin
     if !(msg isa ResponseMessage)
@@ -54,7 +66,8 @@ write_socket = ws -> msg -> begin
         return
     end
 
-    write(ws, serialize(msg))
+    message = serialize(msg)
+    write(ws, message)
 end
 
 

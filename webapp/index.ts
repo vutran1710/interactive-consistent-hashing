@@ -10,21 +10,22 @@ const s = sketch => {
   }
 
   const redraw = (f: Function) => (...args: any[]) => {
-    sketch.draw = f(...args)
+    sketch.draw = () => f(...args)
     sketch.redraw()
   }
 
   // NOTE: example drawing function for incremental drawing
-  sketch.makeCircle = redraw((rad: number, color: string) => () => {
+  sketch.makeCircle = redraw(_ => {
     sketch.strokeWeight(1)
-    sketch.fill(color || 'red')
-    sketch.circle(2 * rad, 3 * rad, rad)
+    sketch.stroke(0, 0, 0, 0.5)
+    sketch.circle(500, 500, 300)
   })
 
   // TODO: implement actions based on events received
 }
 
 
+const objects = []
 let p5 = undefined
 const elementDrawSectionID = 'sketch'
 const socket = new WebSocket('ws://localhost:8081')
@@ -33,9 +34,10 @@ socket.addEventListener('open', function(event) {
   const msg = { sender: "app" }
   socket.send(JSON.stringify(msg))
   p5 = new (window as any).p5(s, elementDrawSectionID)
+  p5.makeCircle()
 })
 
 socket.addEventListener('message', function(event) {
-  const event_info = JSON.parse(event.data)
-  p5[event_info.type](event_info.data)
+  console.log(JSON.parse(event.data))
+  // p5[event_info.type](event_info.data)
 })

@@ -1,3 +1,5 @@
+using TypedTables: Table
+
 # Type Aliases ==========================================
 Angle = Float64
 ServerID = String
@@ -22,17 +24,21 @@ end
 
 struct Database
     table::Table
+    select_single::Any
+    select_many::Any
+    insert_records::Any
+    count::Any
+end
+
+struct CacheTable
+    tbl::Table
+    get::Any
 end
 
 struct ResponseMessage
     data::Any
     action::String
     status::Status
-end
-
-struct SocketMessage
-    sender::Sender
-    payload::Union{Dict, Array}
 end
 
 struct TheSystem
