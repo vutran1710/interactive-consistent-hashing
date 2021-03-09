@@ -58,12 +58,11 @@ run_cli(ws) = begin
         CLICommand("help", __help, []),
     ]
 
-    cmd_map = Dict((c.name => c) for c=commands)
+    command_map = Dict((c.name => c) for c=commands)
+    handler = cli_handler(cmd_map)
 
-    cmd_handler = cli_handler(cmd_map)
-
-    handler = input -> begin
-        result = cmd_handler(input)
+    input_handler = input -> begin
+        result = handler(input)
 
         if result == nothing
             println("\n")
@@ -76,7 +75,7 @@ run_cli(ws) = begin
         println("\n")
     end
 
-    return cli_loop(instruction, handler)
+    return cli_loop(instruction, input_handler)
 end
 
 
