@@ -38,16 +38,16 @@ socket_handler(sender, data, ws, cws) = begin
         return
     end
 
-    if !haskey(cws, sender) && sender != SERVER
+    is_server_sending = sender == string(SERVER)
+
+    if !haskey(cws, sender) && !is_server_sending
         push!(cws, sender => ws)
         return
     end
 
-    if sender != SERVER
-        return
+    if is_server_sending
+        client_wss = values(cws)
+        foreach(w -> write(w, data), client_wss)
     end
 
-    for (_, sending_ws) in cws
-        write(sending_ws, data)
-    end
 end
