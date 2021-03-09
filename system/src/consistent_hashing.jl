@@ -1,5 +1,5 @@
 module main
-using Testing
+using Test
 using Logging
 
 include("structs.jl")
@@ -12,12 +12,13 @@ logger = SimpleLogger()
 global_logger(logger)
 
 
-authenticate(data::Dict) = begin
-    @test getproperty(data, "sender") != nothing
-    return data["sender"]
+authenticate(data::String, ws) = begin
+    parsed = JSON.parse(data)
+    @test getproperty(parsed, "sender") != nothing
+    return parsed["sender"], data
 end
 
-socket_handler(sender, ws, cws, parsed_data, data) = begin
+socket_handler(sender, data, ws, cws) = begin
     if !haskey(cws, sender) && sender != "server"
         return push!(cws, sender => ws)
     end
