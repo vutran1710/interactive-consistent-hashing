@@ -24,19 +24,19 @@ end
 
 struct Database
     table::Table
-    select_single::Any
-    select_many::Any
-    insert_records::Any
-    count::Any
+    select_single::Function
+    select_many::Function
+    insert_records::Function
+    count::Function
 end
 
-struct CacheTable
-    tbl::Table
-    get::Any
+struct CacheCluster
+    table::Table
+    get::Function
 end
 
 struct App
-    get_record::Any
-    add_records::Any
-    fail_server::Any
+    get_record::Function
+    add_records::Function
+    fail_server::Function
 end

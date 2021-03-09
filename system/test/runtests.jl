@@ -3,7 +3,7 @@ using JSON
 using Logging
 include("../src/structs.jl")
 include("../src/database.jl")
-include("../src/caches.jl")
+include("../src/cache.jl")
 
 logger = SimpleLogger()
 global_logger(logger)
@@ -74,7 +74,7 @@ end
     end
 
     # ===================================================
-    # Testing CacheTable
+    # Testing CacheCluster
     db = db_init(20)
     rec = db.select_single(2)
     on_cache_miss = key -> db.select_single(key)

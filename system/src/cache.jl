@@ -54,7 +54,7 @@ cache_init(
     number_of_labels_each_node::Integer,
     on_cache_miss::Any;
     on_cache_hit=nothing,
-)::CacheTable = begin
+)::CacheCluster = begin
     caches = create_cache_servers(number_of_caches)
     cache_map = Dict((s.id => s) for s=caches)
     tbl = create_virtual_nodes(caches, number_of_labels_each_node)
@@ -78,5 +78,5 @@ cache_init(
         return on_cache_hit != nothing ? on_cache_hit(data) : data
     end
 
-    CacheTable(tbl, __get)
+    CacheCluster(tbl, __get)
 end
