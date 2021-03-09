@@ -84,7 +84,7 @@ run_cli(ws) = begin
         return input
     end
 
-    write_to_socket(result::Union{Dict, Nothing}) = begin
+    broadcast(result::Union{Dict, Nothing}) = begin
         if result isa Dict
             push!(result, :sender => SERVER)
             write(ws, JSON.json(result))
@@ -94,7 +94,7 @@ run_cli(ws) = begin
 
     log(result) = @show result; println("\n\n")
 
-    cli_loop(instruction, log ∘ write_to_socket ∘ api ∘ guard)
+    cli_loop(instruction, log ∘ broadcast ∘ api ∘ guard)
 end
 
 make_websocket_server(authenticate, socket_handler)
