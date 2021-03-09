@@ -20,9 +20,7 @@ make_websocket_server(authenticate, handler) = begin
                 continue
             end
 
-            if haskey(sender, cws)
-                handler(sender, cws, parsed)
-            end
+            handler(sender, ws, cws, parsed, data)
         end
     end
 end

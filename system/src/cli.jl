@@ -1,123 +1,53 @@
-function parse_command(user_input)
-    splitted = split(user_input, " ")
-    len = length(splitted)
-
-    if len == 0
-        return nothing, nothing
+cli_loop(instruction::String, handler::Function) = begin
+    println(instruction)
+    while true
+        handler(readline())
     end
-
-    if len == 1
-        return splitted[1], nothing
-    end
-
-    return splitted[1], splitted[2:end]
 end
 
-
-function cli_render_introduction(cmd_maps)
-    combine(r, element) = begin
-        cmd, pair = element
-        func, doc, type = pair["func"], pair["doc"], pair["type"]
-
-        if type == nothing
-            type = "None"
+cli_handler(cmd_map::Dict{String, CLICommand})::Function = begin
+    conversion(tuple) = begin
+        type, val = tuple
+        if type == String
+            return val
         end
-
-        cmd_line = "/$(cmd) \n"
-        doc_line = "  #doc $(doc)\n"
-        arg_line = "  #args $(type)\n\n"
-        result = r * cmd_line * doc_line * arg_line
-        result
-    end
-
-    """
-    ================ ClientCLI ===================
-    ----------------------------------------------
-    $(reduce(combine, cmd_maps, init=""))/help
-      #showing this dialog again
-
-    /exit
-      #no description needed
-    ==============================================
-    """
-end
-
-
-function arg_converter(args::Tuple)
-    type, arg = args
-
-    if type == Integer
-        return parse(Int64, arg)
-    end
-
-    if type == String
-        return arg
-    end
-end
-
-
-function make_command_dict(args...)
-    cmd_dict = Dict()
-    docs = []
-    for item in args
-        if item isa String
-            push!(docs, item)
-        else
-            cmd, handler = item
-            func, type = handler[begin], handler[2:end]
-            controller = Dict("func" => func, "type" => type, "doc" => popfirst!(docs))
-            push!(cmd_dict, cmd => controller)
+        if type == Integer
+            return parse(Int64, val)
         end
     end
-    cmd_dict
-end
 
+    __process_user_input(input::String) = begin
+        input = string.(split(input))
 
-function ClientCLI(args...)
-    cmd_dict = make_command_dict(args...)
-    welcome = cli_render_introduction(cmd_dict)
-    println(welcome)
-
-    handle() = begin
-        print("command /")
-        cmd, args = parse_command(readline())
-
-        if cmd == nothing
-            println("")
+        if length(input) < 2
+            @warn "Not enough arguments"
             return nothing
         end
 
-        if cmd == "help"
-            println(welcome)
+        cmd, args = input[begin], input[2:end]
+
+        if !haskey(cmd_map, cmd)
+            @warn "Invalid commands"
             return nothing
         end
 
-        if cmd == "exit"
-            return "EXIT"
-        end
+        cmd = cmd_map[cmd]
 
-        if !haskey(cmd_dict, cmd)
-            println("Unrecognized command")
+        if length(args) < length(cmd.argument_types)
+            @error "Argument lenght not mached"
             return nothing
         end
-
-        println("~~~~~~~~~~~~~~~ BEGIN")
-        handler = cmd_dict[cmd]
-        func, type = handler["func"], handler["type"]
 
         try
-            args = map(arg_converter, zip(type, args))
+            pairing = zip(cmd.argument_types, args)
+            args = conversion.(pairing)
+            return cmd.exec(args...)
         catch e
+            println("Cannot process input")
             @error e
-            @error "Invalid command arguments"
-            return ResponseMessage(nothing, USER_ERROR)
+            return nothing
         end
-
-        result = func(args...)
-        @info result
-        println("~~~~~~~~~~~~~~~ END")
-        return result
     end
 
-    return handle
+    __process_user_input
 end

@@ -35,8 +35,14 @@ struct CacheCluster
     get::Function
 end
 
-struct App
+struct Backend
     get_record::Function
     add_records::Function
     fail_server::Function
+end
+
+struct CLICommand
+    name::String
+    exec::Function
+    argument_types::Array{DataType}
 end

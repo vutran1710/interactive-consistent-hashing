@@ -4,6 +4,8 @@ using Logging
 include("../src/structs.jl")
 include("../src/database.jl")
 include("../src/cache.jl")
+include("../src/cli.jl")
+include("../src/backend.jl")
 
 logger = SimpleLogger()
 global_logger(logger)
@@ -88,4 +90,23 @@ end
     @test r == nothing
 
     ctbl.get(2)
+end
+
+
+@testset "cli" begin
+    cmd1 = CLICommand("test1", x -> x ^ 2, [Integer])
+    cmd2 = CLICommand("test2", (x, y) -> x + y, [Integer, Integer])
+    cmd3 = CLICommand("test3", (x, y) -> x * " " * y, [String, String])
+    cmd_map = Dict(cmd1.name => cmd1, cmd2.name => cmd2, cmd3.name => cmd3)
+    handler = cli_handler(cmd_map)
+    @test handler("test1") == nothing
+    @test handler("test1 2") == 4
+    @test handler("test2 2 3") == 5
+    @test handler("test2 2 3 4") == 5
+    @test handler("test3 hello world") == "hello world"
+end
+
+
+@testset "backend" begin
+    @test backend_init(10, 2, 3) isa Backend
 end
