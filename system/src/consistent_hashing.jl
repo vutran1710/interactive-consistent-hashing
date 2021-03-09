@@ -18,6 +18,7 @@ global_logger(logger)
 
 run_cli(ws) = begin
     instruction = """
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /new
     'creating backend-app
     'args:
@@ -31,23 +32,31 @@ run_cli(ws) = begin
     'args: record_id::Integer
     'return: Union{Record, Nothing}, CacheID
 
+/add
+    'add more records
+    'args: number::Integer
+    'return: nothing
+
 /help
     'show this diaglog again
-==================================== !SHOWTIME! =======================================
+============================== !SHOWTIME! ================================
 """
-    BACKEND = nothing
+    BackendApp = nothing
 
+    # DEFINE CLI COMMANDS
     __new(args...) = begin
-        BACKEND = backend_init(args...)
+        BackendApp = backend_init(args...)
         Dict(:action => "new", :data => args)
     end
 
     __get(record_id) = begin
-        if BACKEND != nothing
-            result = BACKEND.get_record(record_id)
-            return Dict(:action => "get", :data => result)
-        end
-        @info "Backend must be initialized first, using \"new\" command"
+        result = BackendApp.get_record(record_id)
+        Dict(:action => "get", :data => result)
+    end
+
+    __add(number) = begin
+        result = BackendApp.add_record(number)
+        Dict(:action => "add", :data => result)
     end
 
     __help() = println(instruction)
@@ -55,29 +64,38 @@ run_cli(ws) = begin
     commands = [
         CLICommand("new", __new, [Integer, Integer, Integer]),
         CLICommand("get", __get, [Integer]),
+        CLICommand("add", __add, [Integer]),
         CLICommand("help", __help, []),
     ]
 
+    # COMPOSING FUNCTION PIPELINE, JUST LIKE APIS & MIDDLEWARES
     command_map = Dict((c.name => c) for c=commands)
-    handler = cli_handler(cmd_map)
+    api = cli_handler(command_map)
 
-    input_handler = input -> begin
-        result = handler(input)
-
-        if result == nothing
-            println("\n")
-            return nothing
+    guard(input::String) = begin
+        if BackendApp == nothing
+            valid = startswith(input, "new") || startswith(input, "help")
+            input = valid ? input : ""
+            if !valid
+                @warn "BackendApp must be initialized first"
+            end
         end
 
-        push!(result, :sender => SERVER)
-        @show result
-        write(ws, JSON.json(result))
-        println("\n")
+        return input
     end
 
-    return cli_loop(instruction, input_handler)
-end
+    write_to_socket(result::Union{Dict, Nothing}) = begin
+        if result isa Dict
+            push!(result, :sender => SERVER)
+            write(ws, JSON.json(result))
+        end
+        return result
+    end
 
+    log(result) = @show result; println("\n\n")
+
+    cli_loop(instruction, (log ∘ write_to_socket ∘ api ∘ guard))
+end
 
 make_websocket_server(authenticate, socket_handler)
 make_websocket_client(run_cli)
