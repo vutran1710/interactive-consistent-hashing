@@ -51,9 +51,9 @@ end
 """
 cache_init(
     number_of_caches::Integer,
-    number_of_labels_each_node::Integer,
-    on_cache_miss::Any;
-    on_cache_hit=nothing,
+    number_of_labels_each_node::Integer;
+    on_cache_miss::Any=nothing,
+    on_cache_hit::Any=nothing,
 )::CacheCluster = begin
     caches = create_cache_servers(number_of_caches)
     cache_map = Dict((s.id => s) for s=caches)
