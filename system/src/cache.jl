@@ -52,7 +52,7 @@ end
 
 
 
-""" Create a cache table
+""" Create a cache cluster
 """
 cache_init(
     number_of_caches::Integer,
