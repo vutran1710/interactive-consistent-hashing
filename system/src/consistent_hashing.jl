@@ -37,42 +37,40 @@ run_cli(ws) = begin
 """
     BACKEND = nothing
 
-    new_backend = (args...) -> begin
+    cmd__new_backend = (args...) -> begin
         BACKEND = backend_init(args...)
         Dict(:action => "new", :data => args)
     end
 
-    get_record = record_id -> begin
+    cmd__get_record = record_id -> begin
         if BACKEND != nothing
             result = BACKEND.get_record(record_id)
             return Dict(:action => "get", :data => result)
         end
     end
 
-    help = () -> println(instruction)
+    cmd__help = () -> println(instruction)
 
     commands = [
-        CLICommand("new", new_backend, [Integer, Integer, Integer]),
-        CLICommand("get", get_record, [Integer]),
-        CLICommand("help", help, []),
+        CLICommand("new", cmd__new_backend, [Integer, Integer, Integer]),
+        CLICommand("get", cmd__get_record, [Integer]),
+        CLICommand("help", cmd__help, []),
     ]
 
     cmd_map = Dict((c.name => c) for c=commands)
+
     commander = cli_handler(cmd_map)
 
     handler = input -> begin
-        try
-            result = commander(input)
+        result = commander(input)
 
-            if result == nothing
-                return nothing
-            end
-
-            push!(result, :sender => SERVER)
-            write(ws, JSON.json(result))
-        catch e
-            @error e
+        if result == nothing
+            return nothing
         end
+
+        push!(result, :sender => SERVER)
+        @show result
+        write(ws, JSON.json(result))
         println("\n")
     end
 
