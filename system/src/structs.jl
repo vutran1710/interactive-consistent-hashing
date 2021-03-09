@@ -7,7 +7,6 @@ RecordID = Integer
 Row = NamedTuple
 
 # Constants & Enum ======================================
-@enum Status SUCCESS=1 NOT_FOUND SYSTEM_ERROR USER_ERROR
 @enum Sender SERVER=1 CLIENT
 
 
