@@ -37,34 +37,36 @@ run_cli(ws) = begin
 """
     BACKEND = nothing
 
-    cmd__new_backend = (args...) -> begin
+    __new(args...) = begin
         BACKEND = backend_init(args...)
         Dict(:action => "new", :data => args)
     end
 
-    cmd__get_record = record_id -> begin
+    __get(record_id) = begin
         if BACKEND != nothing
             result = BACKEND.get_record(record_id)
             return Dict(:action => "get", :data => result)
         end
+        @info "Backend must be initialized first, using \"new\" command"
     end
 
-    cmd__help = () -> println(instruction)
+    __help() = println(instruction)
 
     commands = [
-        CLICommand("new", cmd__new_backend, [Integer, Integer, Integer]),
-        CLICommand("get", cmd__get_record, [Integer]),
-        CLICommand("help", cmd__help, []),
+        CLICommand("new", __new, [Integer, Integer, Integer]),
+        CLICommand("get", __get, [Integer]),
+        CLICommand("help", __help, []),
     ]
 
     cmd_map = Dict((c.name => c) for c=commands)
 
-    commander = cli_handler(cmd_map)
+    cmd_handler = cli_handler(cmd_map)
 
     handler = input -> begin
-        result = commander(input)
+        result = cmd_handler(input)
 
         if result == nothing
+            println("\n")
             return nothing
         end
 

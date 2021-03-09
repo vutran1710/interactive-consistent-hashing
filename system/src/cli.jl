@@ -7,6 +7,7 @@ cli_loop(instruction::String, handler::Function) = begin
     end
 end
 
+
 cli_handler(cmd_map::Dict{String, CLICommand})::Function = begin
     conversion(tuple) = begin
         type, val = tuple

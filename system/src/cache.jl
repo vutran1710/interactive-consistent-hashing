@@ -8,6 +8,7 @@ create_cache_servers(number_of_servers::Integer)::Array{CacheServer} = begin
     create.(1:number_of_servers)
 end
 
+
 create_virtual_nodes(
     caches::Array{CacheServer},
     number_of_labels_each_node::Integer;
@@ -32,6 +33,7 @@ create_virtual_nodes(
     Table(label=labels, angle=angles, server=ids, online=online)
 end
 
+
 find_cache_by_hash(hash::Angle, tbl::Table)::ServerID = begin
     """ We find the nearest cache-id in the counter-clockwise direction
     whose angle is greater than the hashed.
@@ -42,9 +44,12 @@ find_cache_by_hash(hash::Angle, tbl::Table)::ServerID = begin
     (!isempty(servers) ? servers[1] : tbl[1]).server
 end
 
+
 hashing(value::Integer)::Angle = begin
     mod(value, 360)
 end
+
+
 
 
 """ Create a cache table
@@ -79,7 +84,7 @@ cache_init(
         data = on_cache_miss(key)
 
         if data != nothing
-            @info "cache-miss: caching $(data) in $(cache_id)"
+            @debug "cache-miss: caching $(data) in $(cache_id)"
             push!(bucket, key => data)
         end
 
