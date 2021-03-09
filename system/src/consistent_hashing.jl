@@ -94,7 +94,7 @@ run_cli(ws) = begin
 
     log(result) = @show result; println("\n\n")
 
-    cli_loop(instruction, (log ∘ write_to_socket ∘ api ∘ guard))
+    cli_loop(instruction, log ∘ write_to_socket ∘ api ∘ guard)
 end
 
 make_websocket_server(authenticate, socket_handler)
