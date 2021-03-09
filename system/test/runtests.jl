@@ -6,6 +6,7 @@ include("../src/database.jl")
 include("../src/cache.jl")
 include("../src/cli.jl")
 include("../src/backend.jl")
+include("../src/websocket.jl")
 
 logger = SimpleLogger()
 global_logger(logger)
@@ -94,11 +95,21 @@ end
 
 
 @testset "cli" begin
+    cmd0 = CLICommand("test0", () -> nothing, [])
     cmd1 = CLICommand("test1", x -> x ^ 2, [Integer])
     cmd2 = CLICommand("test2", (x, y) -> x + y, [Integer, Integer])
     cmd3 = CLICommand("test3", (x, y) -> x * " " * y, [String, String])
-    cmd_map = Dict(cmd1.name => cmd1, cmd2.name => cmd2, cmd3.name => cmd3)
+
+    cmd_map = Dict(
+        cmd0.name => cmd0,
+        cmd1.name => cmd1,
+        cmd2.name => cmd2,
+        cmd3.name => cmd3,
+    )
+
     handler = cli_handler(cmd_map)
+
+    @test handler("test0") == nothing
     @test handler("test1") == nothing
     @test handler("test1 2") == 4
     @test handler("test2 2 3") == 5
@@ -109,4 +120,36 @@ end
 
 @testset "backend" begin
     @test backend_init(10, 2, 3) isa Backend
+end
+
+
+@testset "websocket" begin
+    data = ""
+    @test authenticate(data, 1) == (nothing, data)
+    data = "{\"sender\":\"vutran\"}"
+    @test authenticate(data, 1) == ("vutran", data)
+
+    mock = []
+    cws = Dict()
+
+    Base.write(x::Integer, y::String) = begin
+        # Overwrite for testing only
+        mock = [mock..., x, y]
+    end
+
+    r = socket_handler(nothing, data, nothing, cws)
+    @test r == nothing
+
+    r = socket_handler(CLIENT, data, 1, cws)
+    @test r == nothing
+    @test isempty(mock)
+
+    r = socket_handler("vutran", data, 2, cws)
+    @test r == nothing
+    @test get(cws, "vutran", 0) == 2
+
+    r = socket_handler(SERVER, data, 3, cws)
+    @test r == nothing
+    @info mock
+    @test length(mock) == 4
 end
