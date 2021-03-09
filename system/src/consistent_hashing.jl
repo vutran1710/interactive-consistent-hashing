@@ -20,7 +20,10 @@ run_cli(ws) = begin
     instruction = """
 /new
     'creating backend-app
-    'args: record_number::Integer cache_number::Integer virtual_node_each_cache::Integer
+    'args:
+        - record_number::Integer
+        - cache_number::Integer
+        - virtual_node_each_cache_number::Integer
     'return: nothing
 
 /get
@@ -40,12 +43,10 @@ run_cli(ws) = begin
     end
 
     get_record = record_id -> begin
-        @show BACKEND, record_id
         if BACKEND != nothing
             result = BACKEND.get_record(record_id)
-            Dict(:action => "get", :data => result)
+            return Dict(:action => "get", :data => result)
         end
-        return nothing
     end
 
     help = () -> println(instruction)
@@ -58,21 +59,28 @@ run_cli(ws) = begin
 
     cmd_map = Dict((c.name => c) for c=commands)
     commander = cli_handler(cmd_map)
+
     handler = input -> begin
-        result = commander(input)
+        try
+            result = commander(input)
 
-        if result == nothing
-            return nothing
+            if result == nothing
+                return nothing
+            end
+
+            push!(result, :sender => SERVER)
+            write(ws, JSON.json(result))
+        catch e
+            @error e
         end
-
-        push!(result, :sender => SERVER)
-        write(ws, json(result))
         println("\n")
     end
 
     return cli_loop(instruction, handler)
 end
 
+
 make_websocket_server(authenticate, socket_handler)
 make_websocket_client(run_cli)
+
 end
