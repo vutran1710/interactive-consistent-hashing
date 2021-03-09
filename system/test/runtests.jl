@@ -77,13 +77,14 @@ end
     # Testing CacheCluster
     db = db_init(20)
     rec = db.select_single(2)
-    # on_cache_miss = key -> db.select_single(key)
     ctbl = cache_init(4, 5; on_cache_miss=db.select_single)
-    r = ctbl.get(2)
+    r, cache_id = ctbl.get(2)
     @test r.id == rec.id
     @test r.name == rec.name
+    @test cache_id isa String
+    @info cache_id
 
-    r = ctbl.get(200)
+    r, _= ctbl.get(200)
     @test r == nothing
 
     ctbl.get(2)

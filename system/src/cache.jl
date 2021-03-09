@@ -59,23 +59,31 @@ cache_init(
     cache_map = Dict((s.id => s) for s=caches)
     tbl = create_virtual_nodes(caches, number_of_labels_each_node)
 
-    __get(key::Integer) = begin
+    __get(key::Integer)::Tuple{Any, Union{String, Nothing}} = begin
+        """ Return data along with cache-id
+        """
         hash = hashing(key)
         cache_id = find_cache_by_hash(hash, tbl)
         bucket = cache_map[cache_id].bucket
         data = get(bucket, key, nothing)
 
-        if data == nothing
-            data = on_cache_miss(key)
-            if data != nothing
-                @info "cache-miss: caching $(data) in $(cache_id)"
-                push!(bucket, key => data)
-            end
-            return data
+        if data != nothing
+            result = on_cache_hit != nothing ? on_cache_hit(data) : data
+            return result, cache_id
         end
 
-        @info "cache-hit: cached $(data) in $(cache_id)"
-        return on_cache_hit != nothing ? on_cache_hit(data) : data
+        if on_cache_miss == nothing
+            return nothing, cache_id
+        end
+
+        data = on_cache_miss(key)
+
+        if data != nothing
+            @info "cache-miss: caching $(data) in $(cache_id)"
+            push!(bucket, key => data)
+        end
+
+        return data, cache_id
     end
 
     CacheCluster(tbl, __get)
