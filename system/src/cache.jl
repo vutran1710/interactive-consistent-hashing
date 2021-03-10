@@ -23,13 +23,14 @@ create_virtual_nodes(
     angles = nothing
 
     if even
-        angles = 0:(360/total_node_count):360
+        angles = (0:(360/total_node_count):360)[begin:total_node_count]
     else
         angles = sample(0:360, total_node_count, ordered=true, replace=false)
     end
 
     ids = repeat(cache_ids, number_of_labels_each_node)
     online = collect(trues(total_node_count))
+    @test length(angles) == length(ids) == length(online) == total_node_count
     Table(label=labels, angle=angles, server=ids, online=online)
 end
 
@@ -39,14 +40,23 @@ find_cache_by_hash(hash::Angle, tbl::Table)::ServerID = begin
     whose angle is greater than the hashed.
     For the sake of simplicty, we carry a simple O(n) linear search
     """
-    online_only = tbl[tbl.online .== true]
-    servers = online_only[online_only.angle .>= hash]
+    onlines = tbl[tbl.online .== true]
+    servers = onlines[onlines.angle .>= hash]
     (!isempty(servers) ? servers[1] : tbl[1]).server
 end
 
 
 hashing(value::Integer)::Angle = begin
     mod(value, 360)
+end
+
+
+random_failing(tbl::Table)::Union{ServerID, Nothing} = begin
+    onlines = tbl[tbl.online .== true]
+    index = rand(1:length(onlines))
+    server_id = tbl[index].server
+    tbl.online .= [r.server != server_id for r=tbl]
+    server_id
 end
 
 
@@ -91,5 +101,7 @@ cache_init(
         return data, cache_id
     end
 
-    CacheCluster(tbl, __get)
+    __fail() = random_failing(tbl)
+
+    CacheCluster(tbl, __get, __fail)
 end

@@ -6,8 +6,8 @@ backend_init(
     db = db_init(record_count)
     ch = cache_init(cache_count, node_per_server_count; on_cache_miss=db.select_single)
 
-    __fail_server() = nothing
-    __cache_cluster_info() = values.(ch.table)
+    __fail_server() = ch.fail()
+    __cache_cluster_info(;serialized=true) = serialized ? values.(ch.table) : ch.table
 
     Backend(ch.get, db.insert_records, __fail_server, __cache_cluster_info)
 end

@@ -128,6 +128,20 @@ end
 
     serialized = JSON.json(cluster)
     @show serialized
+
+    fail_server = be.fail_server()
+    @test fail_server isa String
+    @info "Failing=$(fail_server)"
+
+    updated_cluster = be.get_cluster_info(serialized=false)
+    @info updated_cluster
+
+    fail_server = be.fail_server()
+    @test fail_server isa String
+    @info "Failing=$(fail_server)"
+
+    updated_cluster = be.get_cluster_info(serialized=false)
+    @info updated_cluster
 end
 
 

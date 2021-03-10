@@ -49,6 +49,7 @@ run_cli(ws) = begin
 
 /fail
     # failing a random cache-server from cluster
+    # if there is already a failing server, it will be turned on again
     'args: none
     'returns:
         # The updated cache cluster info
@@ -77,12 +78,19 @@ run_cli(ws) = begin
         Dict(:action => "add", :data => result)
     end
 
+    __fail() = begin
+        BackendApp.fail_server()
+        cluster = BackendApp.get_cluster_info()
+        Dict(:action => "new", :data => cluster)
+    end
+
     __help() = println(instruction)
 
     commands = [
         CLICommand("new", __new, [Integer, Integer, Integer]),
         CLICommand("get", __get, [Integer]),
         CLICommand("add", __add, [Integer]),
+        CLICommand("fail", __fail, []),
         CLICommand("help", __help, []),
     ]
 

@@ -77,6 +77,7 @@ $ julia --project=. src/consistent_hashing.jl
 
 /fail
 	# failing a random cache-server from cluster
+	# if there is already a failing server, it will be turned on again
 	'args: none
 	'returns:
 		# The updated cache cluster info

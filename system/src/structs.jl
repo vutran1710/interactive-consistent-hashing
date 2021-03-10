@@ -32,6 +32,7 @@ end
 struct CacheCluster
     table::Table
     get::Function
+    fail::Function
 end
 
 struct Backend
