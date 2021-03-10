@@ -25,15 +25,16 @@ run_cli(ws) = begin
         - record_number::Integer
         - cache_number::Integer
         - virtual_node_for_each_cache_number::Integer
-    'return:
+    'returns:
         # List of node-info, including node-label, angle,
         # server-id and online-status
         - Array{Tuple{String, Float, ServerID, Boolean}}
 
 /get
     # get a single record by record-id
-    'args: record_id::Integer
-    'return:
+    'args:
+        - record_id::Integer
+    'returns:
         # Record data if found, and server-id of the cache
         # that is mapped to the hashed record_id
         - Tuple{Union{Record, Nothing}, CacheID}
@@ -41,14 +42,14 @@ run_cli(ws) = begin
 /add
     # add more records
     'args: record_number::Integer
-    'return:
+    'returns:
         # New length of the updated table
         - Integer
 
 /fail
     # failing a random cache-server from cluster
-    'args: no
-    'return:
+    'args: none
+    'returns:
         # The updated cache cluster info
         - Array{Tuple{String, Float, ServerID, Boolean}}
 
