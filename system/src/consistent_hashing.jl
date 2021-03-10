@@ -20,8 +20,7 @@ run_cli(ws) = begin
     instruction = """
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /new
-    'creating/re-creating backend-app,
-        with a database and a cache-cluster
+    'creat/recreat backend-app, with a database and a cache-cluster
     'args:
         - record_number::Integer
         - cache_number::Integer
