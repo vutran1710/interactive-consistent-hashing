@@ -46,7 +46,8 @@ run_cli(ws) = begin
     # DEFINE CLI COMMANDS
     __new(args...) = begin
         BackendApp = backend_init(args...)
-        Dict(:action => "new", :data => args)
+        cluster = BackendApp.get_cluster_info()
+        Dict(:action => "new", :data => cluster)
     end
 
     __get(record_id) = begin

@@ -23,7 +23,7 @@ create_virtual_nodes(
     angles = nothing
 
     if even
-        angles = 0:(360/(total_node_count-1)):360
+        angles = 0:(360/total_node_count):360
     else
         angles = sample(0:360, total_node_count, ordered=true, replace=false)
     end
