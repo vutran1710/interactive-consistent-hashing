@@ -46,27 +46,44 @@ $ julia --project=. src/consistent_hashing.jl
 `src/consistent_hashing.jl` provide a simple command-line-interface
 
 ```shell
-================ ClientCLI ===================
-----------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /new
-  #doc Re-construct a new System
-  #args DataType[Integer, Integer, Integer]
-
-/add
-  #doc Add a number of records to Store
-  #args Integer
+	'creating/re-creating backend-app,
+		with a database and a cache-cluster
+	'args:
+		- record_number::Integer
+		- cache_number::Integer
+		- virtual_node_for_each_cache_number::Integer
+	'return:
+		# List of node-info, including node-label, angle,
+		server-id and online-status
+		- Array{Tuple{String, Float, ServerID, Boolean}}
 
 /get
-  #doc Get a single record by its ID
-  #args Integer
+	'get a single record by record-id
+	'args: record_id::Integer
+	'return:
+		# Record data if found, and server-id of the cache
+		that is mapped to the hashed record_id
+		- Tuple{Union{Record, Nothing}, CacheID}
+
+/add
+	'add more records
+	'args: record_number::Integer
+	'return:
+		# New length of the updated table
+		- Integer
+
+/fail
+	'failing a random cache-server from cluster
+	'args: no
+	'return:
+		# The updated cache cluster info
+		- Array{Tuple{String, Float, ServerID, Boolean}}
 
 /help
-  #showing this dialog
-
-/exit
-  #no description needed
-==============================================
-# waiting for user to type in command and arguments
+	'show this diaglog again
+============================== !SHOWTIME! ================================
 command /
 
 ```
