@@ -119,7 +119,15 @@ end
 
 
 @testset "backend" begin
-    @test backend_init(10, 2, 3) isa Backend
+    be = backend_init(10, 2, 3)
+    @test be isa Backend
+
+    cluster = be.get_cluster_info()
+    @test cluster isa Array
+    @test cluster[1] isa Tuple
+
+    serialized = JSON.json(cluster)
+    @show serialized
 end
 
 
@@ -137,19 +145,18 @@ end
         mock = [mock..., x, y]
     end
 
-    r = socket_handler(nothing, data, nothing, cws)
-    @test r == nothing
-
-    r = socket_handler(CLIENT, data, 1, cws)
+    r = socket_handler("abc", data, 1, cws)
     @test r == nothing
     @test isempty(mock)
+    @test length(keys(cws)) == 1
 
-    r = socket_handler("vutran", data, 2, cws)
+    r = socket_handler("asdf", data, 1, cws)
     @test r == nothing
-    @test get(cws, "vutran", 0) == 2
+    @test isempty(mock)
+    @test length(keys(cws)) == 2
 
-    r = socket_handler(SERVER, data, 3, cws)
+    r = socket_handler(string(SERVER), data, 2, cws)
     @test r == nothing
-    @info mock
     @test length(mock) == 4
+    @test length(keys(cws)) == 2
 end

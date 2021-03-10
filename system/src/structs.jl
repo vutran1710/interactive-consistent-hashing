@@ -38,6 +38,7 @@ struct Backend
     get_record::Function
     add_records::Function
     fail_server::Function
+    get_cluster_info::Function
 end
 
 struct CLICommand
