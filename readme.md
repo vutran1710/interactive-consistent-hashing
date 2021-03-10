@@ -69,7 +69,8 @@ $ julia --project=. src/consistent_hashing.jl
 
 /add
 	# add more records
-	'args: record_number::Integer
+	'args:
+		- record_number::Integer
 	'returns:
 		# New length of the updated table
 		- Integer
