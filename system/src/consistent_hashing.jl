@@ -20,40 +20,40 @@ run_cli(ws) = begin
     instruction = """
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /new
-    'creat/recreat backend-app, with a database and a cache-cluster
+    # creat/recreat backend-app, with a database and a cache-cluster
     'args:
         - record_number::Integer
         - cache_number::Integer
         - virtual_node_for_each_cache_number::Integer
     'return:
         # List of node-info, including node-label, angle,
-        server-id and online-status
+        # server-id and online-status
         - Array{Tuple{String, Float, ServerID, Boolean}}
 
 /get
-    'get a single record by record-id
+    # get a single record by record-id
     'args: record_id::Integer
     'return:
         # Record data if found, and server-id of the cache
-        that is mapped to the hashed record_id
+        # that is mapped to the hashed record_id
         - Tuple{Union{Record, Nothing}, CacheID}
 
 /add
-    'add more records
+    # add more records
     'args: record_number::Integer
     'return:
         # New length of the updated table
         - Integer
 
 /fail
-    'failing a random cache-server from cluster
+    # failing a random cache-server from cluster
     'args: no
     'return:
         # The updated cache cluster info
         - Array{Tuple{String, Float, ServerID, Boolean}}
 
 /help
-    'show this diaglog again
+    # show this diaglog again
 ============================== !SHOWTIME! ================================
 """
     BackendApp = nothing
