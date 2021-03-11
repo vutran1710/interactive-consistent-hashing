@@ -10,9 +10,8 @@ make_websocket_server(authenticate::Function, handler::Function) = begin
                 data = String(readavailable(ws))
                 sender, data = authenticate(data, cws)
                 handler(sender, data, ws, cws)
-            catch e
-                @error e
-                @info stacktrace()
+            catch
+                cws = Dict()
             end
         end
     end
