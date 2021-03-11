@@ -8,7 +8,11 @@ backend_init(
 
     __hashing(id::RecordID) = ch.find(id)
     __fail_server() = ch.fail()
-    __cache_cluster_info(;serialized=true) = serialized ? values.(ch.table) : ch.table
+    __cache_cluster_info(;serialized=true) = begin
+        ids = Set(ch.table.server)
+        table = serialized ? values.(ch.table) : ch.table
+        Dict(:id => ids, :table => table)
+    end
 
     Backend(
         ch.get,
