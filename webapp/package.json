@@ -16,6 +16,7 @@
     "typescript": "^4.2.2"
   },
   "dependencies": {
-    "@types/p5": "^0.9.1"
+    "@types/p5": "^0.9.1",
+    "distinct-colors": "^3.0.0"
   }
 }
