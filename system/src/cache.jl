@@ -35,14 +35,16 @@ create_virtual_nodes(
 end
 
 
-find_cache_by_hash(hash::Angle, tbl::Table)::ServerID = begin
-    """ We find the nearest cache-id in the counter-clockwise direction
+""" We find the nearest cache-id in the counter-clockwise direction
     whose angle is greater than the hashed.
     For the sake of simplicty, we carry a simple O(n) linear search
-    """
+"""
+find_cache_by_hash(hash::Angle, tbl::Table)::Tuple{ServerID, Angle} = begin
     onlines = tbl[tbl.online .== true]
     servers = onlines[onlines.angle .>= hash]
-    (!isempty(servers) ? servers[1] : tbl[1]).server
+    row = !isempty(servers) ? servers[1] : tbl[1]
+    @info row
+    return row.server, row.angle
 end
 
 
@@ -78,7 +80,7 @@ cache_init(
         """ Return data along with cache-id
         """
         hash = hashing(key)
-        cache_id = find_cache_by_hash(hash, tbl)
+        cache_id, _ = find_cache_by_hash(hash, tbl)
         bucket = cache_map[cache_id].bucket
         data = get(bucket, key, nothing)
 
@@ -101,7 +103,14 @@ cache_init(
         return data, cache_id
     end
 
+    __find(id::RecordID)::Tuple{RecordID, Angle, Angle, ServerID} = begin
+        hash = hashing(id)
+        cache_id, angle = find_cache_by_hash(hash, tbl)
+        @info "Val=$(id) -> Hashed=$(hash) -> Nearest-Angle=$(angle) -> Server=$(cache_id)"
+        return id, hash, angle, cache_id
+    end
+
     __fail() = random_failing(tbl)
 
-    CacheCluster(tbl, __get, __fail)
+    CacheCluster(tbl, __get, __find, __fail)
 end

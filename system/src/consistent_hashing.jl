@@ -20,7 +20,7 @@ run_cli(ws) = begin
     instruction = """
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /new
-    # creat/recreat backend-app, with a database and a cache-cluster
+    # create/recreate backend-app, with a database and a cache-cluster
     'args:
         - record_number::Integer
         - cache_number::Integer
@@ -47,6 +47,15 @@ run_cli(ws) = begin
         # New length of the updated table
         - Integer
 
+/hash
+    # find hashing and the mapped server to a given record-id
+    'args:
+        - id::Integer
+    'returns:
+        # Return a list of the given-input, the hashed value,
+        # and the correspondent server-id
+        - Array{id::Integer, hashed::Angle, nearest::Angle, ServerID}
+
 /fail
     # failing a random cache-server from cluster
     # if there is already a failing server, it will be turned on again
@@ -66,6 +75,11 @@ run_cli(ws) = begin
         BackendApp = backend_init(args...)
         cluster = BackendApp.get_cluster_info()
         Dict(:action => "new", :data => cluster)
+    end
+
+    __hash(record_id) = begin
+        result = BackendApp.hashing(record_id)
+        Dict(:action => "hash", :data => result)
     end
 
     __get(record_id) = begin
@@ -90,6 +104,7 @@ run_cli(ws) = begin
         CLICommand("new", __new, [Integer, Integer, Integer]),
         CLICommand("get", __get, [Integer]),
         CLICommand("add", __add, [Integer]),
+        CLICommand("hash", __hash, [Integer]),
         CLICommand("fail", __fail, []),
         CLICommand("help", __help, []),
     ]

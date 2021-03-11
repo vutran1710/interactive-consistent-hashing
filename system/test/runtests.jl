@@ -91,6 +91,26 @@ end
     @test r == nothing
 
     ctbl.get(2)
+
+    # ==================================================
+    # Testing Hashing
+    id, hashed, angle, cache_id = ctbl.find(234)
+    @test id == 234
+    @test angle > 0
+    @test cache_id isa ServerID
+    @info id, hashed, angle, cache_id
+
+    id, hashed, angle, cache_id = ctbl.find(382349)
+    @test id == 382349
+    @test angle > 0
+    @test cache_id isa ServerID
+    @info id, hashed, angle, cache_id
+
+    id, hashed, angle, cache_id = ctbl.find(3)
+    @test id == 3
+    @test angle > 0
+    @test cache_id isa ServerID
+    @info id, hashed, angle, cache_id
 end
 
 
@@ -142,6 +162,10 @@ end
 
     updated_cluster = be.get_cluster_info(serialized=false)
     @info updated_cluster
+
+    id, angle, cache_id = be.hashing(123456)
+    @test id == 123456
+    @info angle, cache_id
 end
 
 

@@ -32,12 +32,14 @@ end
 struct CacheCluster
     table::Table
     get::Function
+    find::Function
     fail::Function
 end
 
 struct Backend
     get_record::Function
     add_records::Function
+    hashing::Function
     fail_server::Function
     get_cluster_info::Function
 end

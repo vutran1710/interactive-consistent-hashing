@@ -43,12 +43,12 @@ $ julia --project=. src/consistent_hashing.jl
 
 
 ### Usage
-`src/consistent_hashing.jl` provide a simple command-line-interface
+System App provides a simple command-line-interface
 
 ```shell
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /new
-	# creat/recreat backend-app, with a database and a cache-cluster
+	# create/recreate backend-app, with a database and a cache-cluster
 	'args:
 		- record_number::Integer
 		- cache_number::Integer
@@ -74,6 +74,15 @@ $ julia --project=. src/consistent_hashing.jl
 	'returns:
 		# New length of the updated table
 		- Integer
+
+/hash
+	# find hashing and the mapped server to a given record-id
+	'args:
+		- id::Integer
+	'returns:
+		# Return a list of the given-input, the hashed value,
+		# and the correspondent server-id
+		- Array{id::Integer, hashed::Angle, nearest::Angle, ServerID}
 
 /fail
 	# failing a random cache-server from cluster
