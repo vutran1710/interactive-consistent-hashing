@@ -1,3 +1,11 @@
+cli_command(name, func)::CLICommand = begin
+    info = methods(func)
+    params = info.ms[1].sig.parameters
+    args = length(params) > 1 ? collect(params[2:end]) : []
+    CLICommand(name, func, args)
+end
+
+
 cli_loop(instruction::String, handler::Function) = begin
     println(instruction)
     while true

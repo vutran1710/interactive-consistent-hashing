@@ -115,6 +115,21 @@ end
 
 
 @testset "cli" begin
+    test_cmd(x::Integer) = x + 1
+    clicmd = cli_command("test", test_cmd)
+    @info clicmd isa CLICommand
+    @info clicmd.argument_types == [Integer]
+
+    test_cmd(x::Integer, y::Integer) = x + y
+    clicmd = cli_command("test", test_cmd)
+    @info clicmd isa CLICommand
+    @info clicmd.argument_types == [Integer, Integer]
+
+    test_cmd() = "Hello"
+    clicmd = cli_command("test", test_cmd)
+    @info clicmd isa CLICommand
+    @info clicmd.argument_types == []
+
     cmd0 = CLICommand("test0", () -> nothing, [])
     cmd1 = CLICommand("test1", x -> x ^ 2, [Integer])
     cmd2 = CLICommand("test2", (x, y) -> x + y, [Integer, Integer])

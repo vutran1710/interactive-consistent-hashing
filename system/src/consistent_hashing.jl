@@ -16,8 +16,8 @@ logger = SimpleLogger()
 global_logger(logger)
 
 
-run_cli(ws) = begin
-    instruction = """
+
+INSTRUCTION = """
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /new
     # create/recreate backend-app, with a database and a cache-cluster
@@ -68,28 +68,31 @@ run_cli(ws) = begin
     # show this diaglog again
 ============================== !SHOWTIME! ================================
 """
+
+
+run_cli(ws) = begin
     BackendApp = nothing
 
     # DEFINE CLI COMMANDS
-    __new(args...) = begin
-        BackendApp = backend_init(args...)
+    __new(x::Integer, y::Integer, z::Integer) = begin
+        BackendApp = backend_init(x, y, z)
         cluster = BackendApp.get_cluster_info()
         Dict(:action => "new", :data => cluster)
     end
 
-    __hash(record_id) = begin
-        result = BackendApp.hashing(record_id)
-        Dict(:action => "hash", :data => result)
-    end
-
-    __get(record_id) = begin
+    __get(id::RecordID) = begin
         result = BackendApp.get_record(record_id)
         Dict(:action => "get", :data => result)
     end
 
-    __add(number) = begin
+    __add(number::Integer) = begin
         result = BackendApp.add_record(number)
         Dict(:action => "add", :data => result)
+    end
+
+    __hash(id::RecordID) = begin
+        result = BackendApp.hashing(id)
+        Dict(:action => "hash", :data => result)
     end
 
     __fail() = begin
@@ -98,15 +101,15 @@ run_cli(ws) = begin
         Dict(:action => "new", :data => cluster)
     end
 
-    __help() = println(instruction)
+    __help() = println(INSTRUCTION)
 
     commands = [
-        CLICommand("new", __new, [Integer, Integer, Integer]),
-        CLICommand("get", __get, [Integer]),
-        CLICommand("add", __add, [Integer]),
-        CLICommand("hash", __hash, [Integer]),
-        CLICommand("fail", __fail, []),
-        CLICommand("help", __help, []),
+        cli_command("new", __new),
+        cli_command("get", __get),
+        cli_command("add", __add),
+        cli_command("hash", __hash),
+        cli_command("fail", __fail),
+        cli_command("help", __help),
     ]
 
     # COMPOSING FUNCTION PIPELINE, JUST LIKE APIS & MIDDLEWARES
@@ -135,7 +138,7 @@ run_cli(ws) = begin
 
     log(result) = @show result; println("\n\n")
 
-    cli_loop(instruction, log ∘ broadcast ∘ api ∘ guard)
+    cli_loop(INSTRUCTION, log ∘ broadcast ∘ api ∘ guard)
 end
 
 make_websocket_server(authenticate, socket_handler)
