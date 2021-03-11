@@ -65,7 +65,7 @@ System App provides a simple command-line-interface
 	'returns:
 		# Record data if found, and server-id of the cache
 		# that is mapped to the hashed record_id
-		- Tuple{Union{Record, Nothing}, CacheID}
+		- Tuple{Union{Record, Nothing}, ServerID}
 
 /add
 	# add more records
