@@ -1,43 +1,76 @@
-const s = sketch => {
-  sketch.setup = () => {
-    sketch.createCanvas(1000, 1000)
-    sketch.noLoop()
+import { Node, NodeFactory, Point } from './src/types'
+import { angle_to_coord } from './src/maths'
+
+
+const p5_sketch = (s: any) => {
+  s.setup = () => {
+    s.createCanvas(600, 600)
+    s.noLoop()
   }
 
-  sketch.draw = () => {
-    sketch.background('#ddd')
-    sketch.fill(255)
-  }
+  s.draw = () => undefined
 
   const redraw = (f: Function) => (...args: any[]) => {
-    sketch.draw = () => f(...args)
-    sketch.redraw()
+    s.draw = () => f(...args)
+    s.redraw()
   }
 
-  // NOTE: example drawing function for incremental drawing
-  sketch.makeCircle = redraw(_ => {
-    sketch.strokeWeight(1)
-    sketch.stroke(0, 0, 0, 0.5)
-    sketch.circle(500, 500, 300)
+  const origin = Point.from_coord(300, 300)
+  const diameter = 400
+
+  s.pin_points = redraw((nodes: Node[]) => {
+    const radius = diameter / 2
+    nodes.forEach(node => {
+      // Point
+      const coord = angle_to_coord(node.angle, radius, origin)
+      s.stroke(node.color)
+      s.strokeWeight(15)
+      s.point(coord.x, coord.y)
+      // Label
+      const extended = radius * 1.2
+      const txt_coord = angle_to_coord(node.angle, extended, origin)
+      s.stroke(0, 0, 0, 0)
+      s.background(0, 0, 0, 0)
+      s.textAlign(s.CENTER)
+      s.text(node.label, txt_coord.x, txt_coord.y)
+    })
   })
 
-  // TODO: implement actions based on events received
+  s.make_circle = redraw(() => {
+    s.strokeWeight(3)
+    s.stroke('lightblue')
+    s.circle(origin.x, origin.y, diameter)
+  })
+
+  s.on_open = s.make_circle
+  s.on_new = s.pin_points
+
 }
 
 
-const objects = []
 let p5 = undefined
-const elementDrawSectionID = 'sketch'
+const canvasContainerID = 'sketch'
 const socket = new WebSocket('ws://localhost:8081')
 
-socket.addEventListener('open', function(event) {
-  const msg = { sender: "app" }
+socket.onopen = () => {
+  const msg = { sender: Math.random() }
   socket.send(JSON.stringify(msg))
-  p5 = new (window as any).p5(s, elementDrawSectionID)
-  p5.makeCircle()
-})
+  p5 = new (window as any).p5(p5_sketch, canvasContainerID)
+  p5.on_open()
+}
 
-socket.addEventListener('message', function(event) {
-  console.log(JSON.parse(event.data))
-  // p5[event_info.type](event_info.data)
-})
+socket.onerror = () => socket.close()
+
+
+socket.onmessage = event => {
+  const payload = JSON.parse(event.data)
+  console.log("Received=", payload)
+  const { action, data } = payload
+  const draw = p5[`on_${action}`]
+
+  if (action == "new") {
+    const factory = new NodeFactory(data.id)
+    const nodes = factory.produce_nodes(data.table)
+    draw(nodes)
+  }
+}
