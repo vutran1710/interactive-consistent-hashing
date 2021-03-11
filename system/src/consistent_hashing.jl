@@ -19,10 +19,11 @@ global_logger(logger)
 
 println(WELCOME)
 
+BackendApp = nothing
+
 
 run_cli(ws) = begin
-    BackendApp = nothing
-
+    global BackendApp
     # DEFINE CLI COMMANDS
     __new(x::Integer, y::Integer, z::Integer) = begin
         BackendApp = backend_init(x, y, z)
@@ -91,7 +92,26 @@ run_cli(ws) = begin
     cli_loop(INSTRUCTION, log ∘ broadcast ∘ api ∘ guard)
 end
 
-make_websocket_server(authenticate, socket_handler)
+
+ws_callback = (handler::Function) -> (sender, data, ws, cws) -> begin
+    client_count_before = length(values(cws))
+    handler(sender, data, ws, cws)
+    client_count_after = length(values(cws))
+
+    if client_count_after > client_count_before && BackendApp != nothing
+        @info "New client attached, Foward system info"
+        data = Dict(
+            :data => BackendApp.get_cluster_info(),
+            :sender => string(SERVER),
+            :action => "new",
+        )
+        deserialized = JSON.json(data)
+        write(ws, deserialized)
+    end
+
+end
+
+make_websocket_server(authenticate, ws_callback(socket_handler))
 make_websocket_client(run_cli)
 
 end
