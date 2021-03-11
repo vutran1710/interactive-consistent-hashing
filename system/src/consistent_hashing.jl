@@ -17,6 +17,16 @@ global_logger(logger)
 
 
 
+println("""
+-------------------- INTERACTIVE-CONSISTENT-HASHING ----------------------
+Made by VuTran
+@github: vutran1710
+@email: me@vutr.io
+"""
+)
+
+
+
 INSTRUCTION = """
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /new
