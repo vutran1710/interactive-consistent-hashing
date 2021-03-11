@@ -37,8 +37,8 @@ const p5_sketch = (s: any) => {
   })
 
   s.make_circle = redraw(() => {
-    s.strokeWeight(3)
-    s.stroke('lightblue')
+    s.strokeWeight(2)
+    s.stroke("#89b6fa")
     s.circle(origin.x, origin.y, diameter)
   })
 
