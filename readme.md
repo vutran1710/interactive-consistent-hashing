@@ -1,6 +1,9 @@
 # Interactive Consistent Hashing
 banner placed
 
+## Project Status
+**UNDER ACTIVE DEVELOPMENT**
+
 ## Prelude
 - How/Why/When/What?
 
