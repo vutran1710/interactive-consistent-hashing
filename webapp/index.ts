@@ -23,12 +23,20 @@ const p5_sketch = (s: any) => {
     nodes.forEach(node => {
       // Point
       const coord = angle_to_coord(node.angle, radius, origin)
-      s.stroke(node.color)
-      s.strokeWeight(15)
-      s.point(coord.x, coord.y)
+      if (!node.online) {
+	s.strokeWeight(1)
+	s.stroke("#ddd")
+	s.fill('white')
+	s.circle(coord.x, coord.y, 15)
+      } else {
+	s.stroke(node.color)
+	s.strokeWeight(15)
+	s.point(coord.x, coord.y)
+      }
       // Label
       const extended = radius * 1.2
       const txt_coord = angle_to_coord(node.angle, extended, origin)
+      s.fill(node.online ? 'black' : '#ddd')
       s.stroke(0, 0, 0, 0)
       s.background(0, 0, 0, 0)
       s.textAlign(s.CENTER)
