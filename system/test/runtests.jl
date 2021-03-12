@@ -158,8 +158,10 @@ end
     @test be isa Backend
 
     cluster = be.get_cluster_info()
-    @test cluster isa Array
-    @test cluster[1] isa Tuple
+    @info cluster
+    @test cluster isa Dict
+    @test length(cluster[:id]) == 2
+    @test length(cluster[:table]) == 6
 
     serialized = JSON.json(cluster)
     @show serialized
