@@ -39,10 +39,15 @@ end
     whose angle is greater than the hashed.
     For the sake of simplicty, we carry a simple O(n) linear search
 """
-find_cache_by_hash(hash::Angle, tbl::Table)::Tuple{ServerID, Angle} = begin
+find_cache_by_hash(hash::Angle, tbl::Table)::Tuple{Union{ServerID, Nothing}, Union{Angle, Nothing}} = begin
     onlines = tbl[tbl.online .== true]
+
+    if isempty(onlines)
+        return nothing, nothing
+    end
+
     servers = onlines[onlines.angle .>= hash]
-    row = !isempty(servers) ? servers[1] : tbl[1]
+    row = !isempty(servers) ? servers[1] : onlines[1]
     return row.server, row.angle
 end
 
@@ -61,7 +66,7 @@ random_failing(tbl::Table)::Union{ServerID, Nothing} = begin
 
     index = rand(1:length(onlines))
     server_id = tbl[index].server
-    tbl.online .= [r.server != server_id && r.online == true for r=tbl]
+    tbl.online .= [r.server == server_id ? false : r.online for r=tbl]
     server_id
 end
 
@@ -85,6 +90,12 @@ cache_init(
         """
         hash = hashing(key)
         cache_id, _ = find_cache_by_hash(hash, tbl)
+
+        if cache_id == nothing
+            @warn "CacheCluster has been down completely"
+            return nothing, nothing
+        end
+
         bucket = cache_map[cache_id].bucket
         data = get(bucket, key, nothing)
 

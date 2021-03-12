@@ -98,7 +98,7 @@ run_cli(ws) = begin
 
     log(result) = begin
         @show result
-        println("~~~~~~~~~> Finished")
+        println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~> Finished")
     end
 
     cli_loop(INSTRUCTION, log ∘ broadcast ∘ api ∘ guard)
