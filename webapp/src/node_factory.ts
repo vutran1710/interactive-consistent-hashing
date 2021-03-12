@@ -18,8 +18,7 @@ export class NodeFactory {
   diameter: number
   radius: number
 
-  constructor(server_ids: string[], origin: Point, diameter: number) {
-    this.init_color_palette(server_ids)
+  constructor(origin: Point, diameter: number) {
     this.origin = origin
     this.diameter = diameter
     this.radius = diameter / 2

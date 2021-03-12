@@ -22,7 +22,7 @@ export const distance = (start: Point, end: Point): number => {
   return (termx + termy) ** 0.5
 }
 
-export const make_arc_points = (start: Point, end: Point, origin: Point, radius: number) => {
+export const make_arc = (start: Point, end: Point, origin: Point, radius: number) => {
   const r = distance(start, end) * 0.5
   const a1 = Math.acos((start.x - origin.x) / radius)
   const a2 = Math.acos((end.x - origin.x) / radius)
