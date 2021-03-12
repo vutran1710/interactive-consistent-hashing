@@ -1,6 +1,5 @@
 import { angle_to_coord, make_arc } from './maths'
-import { Node } from './node_factory'
-import { Point } from './types'
+import { Point, Node } from './types'
 
 
 export interface SketchConfig {
@@ -60,7 +59,7 @@ const Sketch = ({
       // Label
       const extended = radius * 1.2
       const txt_coord = angle_to_coord(node.angle, extended, origin)
-      s.fill(node.online ? 'black' : 'white')
+      s.fill(node.online ? 'black' : '#ddd')
       s.stroke(0, 0, 0, 0)
       s.textAlign(s.CENTER)
       s.text(node.label, txt_coord.x, txt_coord.y)

@@ -1,18 +1,9 @@
 import distinctColors from 'distinct-colors'
-import { GetRecordData, HashObject, Point } from './types'
+import { GetRecordData, HashObject, Point, Node } from './types'
 import { angle_to_coord } from './maths'
 
 
-export class Node {
-  label: string
-  angle: number
-  server: string
-  online: boolean
-  color: string
-}
-
-
-export class NodeFactory {
+export default class NodeFactory {
   palette: any
   origin: Point
   diameter: number
@@ -26,10 +17,8 @@ export class NodeFactory {
 
   init_color_palette(server_ids: string[]) {
     const colors = distinctColors({ count: server_ids.length })
-    this.palette = server_ids.reduce((palette, id, idx) => ({
-      ...palette,
-      [id]: colors[idx].name()
-    }), {})
+    this.palette = {}
+    server_ids.forEach((id, idx) => this.palette[id] = colors[idx].name())
   }
 
   on_new(point_data: any[]): Array<Node> {

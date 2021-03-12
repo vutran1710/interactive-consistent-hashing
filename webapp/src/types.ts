@@ -41,3 +41,12 @@ export class HashObject {
     this.cache_id = data[3]
   }
 }
+
+
+export class Node {
+  label: string
+  angle: number
+  server: string
+  online: boolean
+  color: string
+}
