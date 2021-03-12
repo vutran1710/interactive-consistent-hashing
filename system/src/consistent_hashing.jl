@@ -44,7 +44,7 @@ run_cli(ws) = begin
     end
 
     __info() = begin
-        cluster = BackendApp.get_cluster_info(serialized=false)
+        cluster = BackendApp.get_cluster_info(serialize=false)
         println(cluster)
     end
 
@@ -113,8 +113,8 @@ ws_callback = (handler::Function) -> (sender, data, ws, cws) -> begin
             :sender => string(SERVER),
             :action => "new",
         )
-        deserialized = JSON.json(data)
-        write(ws, deserialized)
+        serialized = JSON.json(data)
+        write(ws, serialized)
     end
 
 end

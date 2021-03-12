@@ -168,14 +168,14 @@ end
     @test fail_server isa String
     @info "Failing=$(fail_server)"
 
-    updated_cluster = be.get_cluster_info(serialized=false)
+    updated_cluster = be.get_cluster_info(serialize=false)
     @info updated_cluster
 
     fail_server = be.fail_server()
     @test fail_server isa String
     @info "Failing=$(fail_server)"
 
-    updated_cluster = be.get_cluster_info(serialized=false)
+    updated_cluster = be.get_cluster_info(serialize=false)
     @info updated_cluster
 
     id, angle, cache_id = be.hashing(123456)
