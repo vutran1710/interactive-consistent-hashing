@@ -32,7 +32,7 @@ run_cli(ws) = begin
     end
 
     __get(id::RecordID) = begin
-        result = BackendApp.get_record(record_id)
+        result = BackendApp.get_record(id)
         Dict(:action => "get", :data => result)
     end
 
