@@ -43,7 +43,6 @@ find_cache_by_hash(hash::Angle, tbl::Table)::Tuple{ServerID, Angle} = begin
     onlines = tbl[tbl.online .== true]
     servers = onlines[onlines.angle .>= hash]
     row = !isempty(servers) ? servers[1] : tbl[1]
-    @info row
     return row.server, row.angle
 end
 
@@ -101,7 +100,7 @@ cache_init(
         data = on_cache_miss(key)
 
         if data != nothing
-            @debug "cache-miss: caching $(data) in $(cache_id)"
+            @info "cache-miss: caching $(data) in $(cache_id)"
             push!(bucket, key => data)
         end
 

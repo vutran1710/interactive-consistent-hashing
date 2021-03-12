@@ -17,7 +17,7 @@ create_table(rc::Array{Record})::Table = begin
 end
 
 
-insert_records(table::Table, number_of_records::Integer) = begin
+insert_records(table::Table, number_of_records::Integer)::Integer = begin
     start = length(table) + 1
     stop = start + number_of_records - 1
     new_records = create_records(start=start, stop=stop)
@@ -25,6 +25,7 @@ insert_records(table::Table, number_of_records::Integer) = begin
         push!(table.id, r.id)
         push!(table.name, r.name)
     end
+    length(table)
 end
 
 

@@ -89,7 +89,6 @@ System App provides a simple command-line-interface
 
 /fail
 	# failing a random cache-server from cluster
-	# if there is already a failing server, it will be turned on again
 	'args: none
 	'returns:
 		# The updated cache cluster info

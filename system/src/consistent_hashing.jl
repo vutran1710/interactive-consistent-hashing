@@ -24,6 +24,7 @@ BackendApp = nothing
 
 run_cli(ws) = begin
     global BackendApp
+
     # DEFINE CLI COMMANDS
     __new(x::Integer, y::Integer, z::Integer) = begin
         BackendApp = backend_init(x, y, z)
@@ -39,7 +40,7 @@ run_cli(ws) = begin
     end
 
     __add(number::Integer) = begin
-        result = BackendApp.add_record(number)
+        result = BackendApp.add_records(number)
         Dict(:action => "add", :data => result)
     end
 
@@ -95,7 +96,10 @@ run_cli(ws) = begin
         return result
     end
 
-    log(result) = @show result; println("\n\n")
+    log(result) = begin
+        @show result
+        println("~~~~~~~~~> Finished")
+    end
 
     cli_loop(INSTRUCTION, log ∘ broadcast ∘ api ∘ guard)
 end
@@ -107,7 +111,8 @@ ws_callback = (handler::Function) -> (sender, data, ws, cws) -> begin
     client_count_after = length(values(cws))
 
     if client_count_after > client_count_before && BackendApp != nothing
-        @info "New client attached, Foward system info"
+        println("New client attached, Foward system info!")
+        print("command /")
         data = Dict(
             :data => BackendApp.get_cluster_info(),
             :sender => string(SERVER),

@@ -2,7 +2,7 @@ import { Point } from './src/types'
 import { angle_to_coord, make_arc_points } from './src/maths'
 import { Node, NodeFactory } from './src/node_factory'
 
-const origin = Point.from_coord(300, 300)
+const origin = Point.from_coord(400, 400)
 const diameter = 400
 const circumference = Math.PI * diameter
 
@@ -22,8 +22,8 @@ const p5_sketch = (s: any) => {
 
   s.pin_points = redraw((nodes: Node[]) => {
     const radius = diameter / 2
-    const online_node_dim = Math.min(circumference / (3 * nodes.length), 20)
-    const offline_node_dia = Math.min(circumference / (4 * nodes.length), online_node_dim)
+    const online_node_d = Math.min(circumference / (3 * nodes.length), 20)
+    const offline_node_d = Math.min(circumference / (4 * nodes.length), online_node_d)
 
     nodes.forEach(node => {
       // Point
@@ -32,10 +32,10 @@ const p5_sketch = (s: any) => {
 	s.strokeWeight(1)
 	s.stroke("#ddd")
 	s.fill('white')
-	s.circle(coord.x, coord.y, offline_node_dia)
+	s.circle(coord.x, coord.y, offline_node_d)
       } else {
 	s.stroke(node.color)
-	s.strokeWeight(online_node_dim)
+	s.strokeWeight(online_node_d)
 	s.point(coord.x, coord.y)
       }
       // Label
@@ -62,19 +62,15 @@ const p5_sketch = (s: any) => {
     s.point(record.x, record.y)
     // cache-point
     const cache = points[1]
-    s.stroke('blue')
+    s.stroke('royalblue')
     s.strokeWeight(10)
     s.point(cache.x, cache.y)
     // arc
     const ps = make_arc_points(record, cache, origin, diameter / 2)
     s.strokeWeight(1)
-    s.stroke('red')
+    s.stroke('#ff5f958a')
     s.noFill()
     s.arc(ps.c.x, ps.c.y, ps.r * 2, ps.r * 2, ps.start, ps.stop, s.OPEN)
-    // console.log("=============> ", p)
-    // s.point(p.center.x, p.center.y)
-    // s.fill(0, 0, 0, 0)
-    // s.circle(p.center.x, p.center.y, p.radius)
   })
 
   s.on_open = s.make_circle
