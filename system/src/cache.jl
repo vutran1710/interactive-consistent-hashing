@@ -55,9 +55,14 @@ end
 
 random_failing(tbl::Table)::Union{ServerID, Nothing} = begin
     onlines = tbl[tbl.online .== true]
+
+    if isempty(onlines)
+        return nothing
+    end
+
     index = rand(1:length(onlines))
     server_id = tbl[index].server
-    tbl.online .= [r.server != server_id for r=tbl]
+    tbl.online .= [r.server != server_id && r.online == true for r=tbl]
     server_id
 end
 

@@ -32,13 +32,20 @@ run_cli(ws) = begin
     end
 
     __get(id::RecordID) = begin
-        result = BackendApp.get_record(id)
+        record, _ = BackendApp.get_record(id)
+        hash = BackendApp.hashing(id)
+        result = Dict(:record => record, :hash => hash)
         Dict(:action => "get", :data => result)
     end
 
     __add(number::Integer) = begin
         result = BackendApp.add_record(number)
         Dict(:action => "add", :data => result)
+    end
+
+    __info() = begin
+        cluster = BackendApp.get_cluster_info(serialized=false)
+        println(cluster)
     end
 
     __hash(id::RecordID) = begin
@@ -58,6 +65,7 @@ run_cli(ws) = begin
         cli_command("new", __new),
         cli_command("get", __get),
         cli_command("add", __add),
+        cli_command("info", __info),
         cli_command("hash", __hash),
         cli_command("fail", __fail),
         cli_command("help", __help),

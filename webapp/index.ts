@@ -17,9 +17,13 @@ const p5_sketch = (s: any) => {
 
   const origin = Point.from_coord(300, 300)
   const diameter = 400
+  const circumference = Math.PI * diameter
 
   s.pin_points = redraw((nodes: Node[]) => {
     const radius = diameter / 2
+    const online_node_dim = Math.min(circumference / (3 * nodes.length), 20)
+    const offline_node_dia = Math.min(circumference / (4 * nodes.length), online_node_dim)
+
     nodes.forEach(node => {
       // Point
       const coord = angle_to_coord(node.angle, radius, origin)
@@ -27,10 +31,10 @@ const p5_sketch = (s: any) => {
 	s.strokeWeight(1)
 	s.stroke("#ddd")
 	s.fill('white')
-	s.circle(coord.x, coord.y, 15)
+	s.circle(coord.x, coord.y, offline_node_dia)
       } else {
 	s.stroke(node.color)
-	s.strokeWeight(15)
+	s.strokeWeight(online_node_dim)
 	s.point(coord.x, coord.y)
       }
       // Label
@@ -46,13 +50,13 @@ const p5_sketch = (s: any) => {
 
   s.make_circle = redraw(() => {
     s.strokeWeight(2)
-    s.stroke("#89b6fa")
+    s.stroke('#cfd2e6')
     s.circle(origin.x, origin.y, diameter)
   })
 
   s.on_open = s.make_circle
   s.on_new = s.pin_points
-
+  s.on_get = s.make_point_and_cache
 }
 
 
@@ -64,7 +68,6 @@ socket.onopen = () => {
   const msg = { sender: Math.random() }
   socket.send(JSON.stringify(msg))
   p5 = new (window as any).p5(p5_sketch, canvasContainerID)
-  p5.on_open()
 }
 
 socket.onerror = () => socket.close()
@@ -77,8 +80,15 @@ socket.onmessage = event => {
   const draw = p5[`on_${action}`]
 
   if (action == "new") {
+    p5.clear()
+    p5.fill('white')
+    p5.on_open()
     const factory = new NodeFactory(data.id)
     const nodes = factory.produce_nodes(data.table)
     draw(nodes)
+  }
+
+  if (action == "get") {
+    console.log(data)
   }
 }

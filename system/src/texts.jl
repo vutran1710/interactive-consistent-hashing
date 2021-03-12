@@ -1,4 +1,4 @@
-WELCOME = """
+const WELCOME = """
 -------------------- INTERACTIVE-CONSISTENT-HASHING ----------------------
 Made by VuTran
 @github: vutran1710
@@ -7,7 +7,7 @@ Made by VuTran
 
 
 
-INSTRUCTION = """
+const INSTRUCTION = """
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /new
     # create/recreate backend-app, with a database and a cache-cluster
@@ -36,6 +36,11 @@ INSTRUCTION = """
     'returns:
         # New length of the updated table
         - Integer
+
+/info
+    # View Cache-cluster hash table in the Terminal
+    'args: none
+    'returns: nothing
 
 /hash
     # find hashing and the mapped server to a given record-id
