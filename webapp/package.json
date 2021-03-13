@@ -5,6 +5,7 @@
   "main": "fuse.ts",
   "scripts": {
     "start": "ts-node fuse.ts",
+    "build": "NODE_ENV=prod ts-node fuse.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
