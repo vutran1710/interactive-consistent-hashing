@@ -26,41 +26,44 @@ run_cli(ws) = begin
     global BackendApp
 
     # DEFINE CLI COMMANDS
-    __new(x::Integer, y::Integer, z::Integer) = begin
+    __new(x::Integer, y::Integer, z::Integer)::Dict = begin
         BackendApp = backend_init(x, y, z)
+        BackendApp.get_database_info(serialize=false)
         cluster = BackendApp.get_cluster_info()
         Dict(:action => "new", :data => cluster)
     end
 
-    __get(id::RecordID) = begin
+    __get(id::RecordID)::Dict = begin
         record, _ = BackendApp.get_record(id)
         hash = BackendApp.hashing(id)
         result = Dict(:record => record, :hash => hash)
         Dict(:action => "get", :data => result)
     end
 
-    __add(number::Integer) = begin
+    __add(number::Integer)::Dict = begin
         result = BackendApp.add_records(number)
+        BackendApp.get_database_info(serialize=false)
         Dict(:action => "add", :data => result)
     end
 
-    __info() = begin
-        cluster = BackendApp.get_cluster_info(serialize=false)
-        println(cluster)
+    __info()::Nothing = begin
+        BackendApp.get_database_info(serialize=false)
+        BackendApp.get_cluster_info(serialize=false)
+        nothing
     end
 
-    __hash(id::RecordID) = begin
+    __hash(id::RecordID)::Dict = begin
         result = BackendApp.hashing(id)
         Dict(:action => "hash", :data => result)
     end
 
-    __fail() = begin
+    __fail()::Dict = begin
         BackendApp.fail_server()
         cluster = BackendApp.get_cluster_info()
         Dict(:action => "new", :data => cluster)
     end
 
-    __help() = println(INSTRUCTION)
+    __help()::Nothing = println(INSTRUCTION)
 
     commands = [
         cli_command("new", __new),

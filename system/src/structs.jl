@@ -42,6 +42,7 @@ struct Backend
     hashing::Function
     fail_server::Function
     get_cluster_info::Function
+    get_database_info::Function
 end
 
 struct CLICommand
