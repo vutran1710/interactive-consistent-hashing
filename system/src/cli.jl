@@ -1,4 +1,4 @@
-cli_command(name, func)::CLICommand = begin
+cli_command(name::String, func::Function)::CLICommand = begin
     info = methods(func)
     params = info.ms[1].sig.parameters
     args = length(params) > 1 ? collect(params[2:end]) : []
@@ -6,7 +6,7 @@ cli_command(name, func)::CLICommand = begin
 end
 
 
-cli_loop(instruction::String, handler::Function) = begin
+cli_loop(instruction::String, handler::Function)::Nothing = begin
     println(instruction)
     while true
         prompt = "command /"

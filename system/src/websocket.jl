@@ -2,6 +2,7 @@ using HTTP
 
 const host = get(ENV, "ICH_HOST", "127.0.0.1")
 
+
 make_websocket_server(authenticate::Function, handler::Function) = begin
     cws = Dict()
     println("Initializing WS server, binding $(host):8081")
@@ -26,7 +27,7 @@ make_websocket_client(handler::Function) = begin
 end
 
 
-authenticate(data::String, ws) = begin
+authenticate(data::String, _::Any) = begin
     get_sender = d -> get(d, "sender", nothing)
     sender = try (get_sender ∘ JSON.parse)(data) catch end
     return sender, data

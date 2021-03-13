@@ -23,8 +23,10 @@ create_virtual_nodes(
     angles = nothing
 
     if even
+        # NOTE: nodes are distributed evenly over the Ring
         angles = (0:(360/total_node_count):360)[begin:total_node_count]
     else
+        # NOTE: nodes are distributed randomly over the Ring
         angles = sample(0:360, total_node_count, ordered=true, replace=false)
     end
 

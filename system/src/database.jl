@@ -1,7 +1,7 @@
 using Faker: first_name, last_name
 
 
-row_to_record(r::Row) = Record(r.id, r.name)
+row_to_record(r::Row)::Record = Record(r.id, r.name)
 
 
 create_records(;start::Integer=1, stop::Integer=1000)::Array{Record} = begin

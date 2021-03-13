@@ -22,7 +22,8 @@ const socket = new WebSocket(url)
 
 
 socket.onopen = () => {
-  const msg = { sender: Math.random() }
+  const msg = { sender: Math.random().toString() }
+  console.log(msg)
   socket.send(JSON.stringify(msg))
   p5 = new (window as any).p5(Sketch(config), canvasContainerID)
   factory = new NodeFactory(config.hashing_ring_origin, config.hashing_ring_diameter)
