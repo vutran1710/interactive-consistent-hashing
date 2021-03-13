@@ -85,9 +85,9 @@ cache_init(
     cache_map = Dict((s.id => s) for s=caches)
     tbl = create_virtual_nodes(caches, number_of_labels_each_node)
 
+    """ Return data along with cache-id
+    """
     __get(key::Integer)::Tuple{Any, Union{String, Nothing}} = begin
-        """ Return data along with cache-id
-        """
         hash = hashing(key)
         cache_id, _ = find_cache_by_hash(hash, tbl)
 
