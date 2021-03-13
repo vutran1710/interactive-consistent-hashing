@@ -4,7 +4,7 @@ COPY lighttpd.conf /etc/lighttpd
 COPY webapp/dist/ /var/www
 COPY system/ /app
 WORKDIR /app
-RUN julia -e "using Pkg;Pkg.activate(\".\");Pkg.instantiate();"
+RUN COMPILE=1 julia -e "using Pkg;Pkg.activate(\".\");Pkg.instantiate();Pkg.precompile();"
 EXPOSE 4444
 EXPOSE 8081
 ENTRYPOINT service lighttpd start && julia --project=. src/consistent_hashing.jl

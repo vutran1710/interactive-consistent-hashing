@@ -16,7 +16,9 @@ cli_loop(instruction::String, handler::Function)::Nothing = begin
 end
 
 
-cli_handler(cmd_map::Dict{String, CLICommand})::Function = begin
+cli_handler(cmds::Array{CLICommand})::Function = begin
+    cmd_map = Dict((c.name => c) for c=cmds)
+
     conversion(tuple) = begin
         type, val = tuple
         if type == String

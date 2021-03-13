@@ -41,16 +41,16 @@ end
     whose angle is greater than the hashed.
     For the sake of simplicty, we carry a simple O(n) linear search
 """
-find_cache_by_hash(hash::Angle, tbl::Table)::Tuple{Union{ServerID, Nothing}, Union{Angle, Nothing}} = begin
+find_cache_by_hash(hash::Angle, tbl::Table)::Union{Row, Nothing} = begin
     onlines = tbl[tbl.online .== true]
 
     if isempty(onlines)
-        return nothing, nothing
+        return nothing
     end
 
     servers = onlines[onlines.angle .>= hash]
     row = !isempty(servers) ? servers[1] : onlines[1]
-    return row.server, row.angle
+    return row
 end
 
 
@@ -91,13 +91,14 @@ cache_init(
     """
     __get(key::Integer)::Tuple{Any, Union{String, Nothing}} = begin
         hash = hashing(key)
-        cache_id, _ = find_cache_by_hash(hash, tbl)
+        row = find_cache_by_hash(hash, tbl)
 
-        if cache_id == nothing
+        if row == nothing
             @warn "CacheCluster has been down completely"
             return nothing, nothing
         end
 
+        cache_id = row.server
         bucket = cache_map[cache_id].bucket
         data = get(bucket, key, nothing)
 
@@ -120,11 +121,16 @@ cache_init(
         return data, cache_id
     end
 
-    __find(id::RecordID)::Tuple{RecordID, Angle, Angle, ServerID} = begin
+    __find(id::RecordID)::Union{Nothing, Tuple{RecordID, Angle, Angle, ServerID}} = begin
         hash = hashing(id)
-        cache_id, angle = find_cache_by_hash(hash, tbl)
-        @info "Val=$(id) -> Hashed=$(hash) -> Nearest-Angle=$(angle) -> Server=$(cache_id)"
-        return id, hash, angle, cache_id
+        row = find_cache_by_hash(hash, tbl)
+
+        if row != nothing
+            @info "Val=$(id) -> Hashed=$(hash) -> Nearest-Angle=$(row.angle) -> Server=$(row.server)"
+            return id, hash, row.angle, row.server
+        end
+
+        return nothing
     end
 
     __fail() = random_failing(tbl)

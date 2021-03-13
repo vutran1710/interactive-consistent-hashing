@@ -1,5 +1,3 @@
-""" Putting everything together
-"""
 module main
 using Test
 using Logging
@@ -16,56 +14,53 @@ include("texts.jl")
 logger = SimpleLogger()
 global_logger(logger)
 
-
 println(WELCOME)
 
-BackendApp = nothing
 
+const run_cli = (app::Backend) -> (ws::HTTP.WebSockets.WebSocket) -> begin
 
-run_cli(ws) = begin
-    global BackendApp
+    ref_app = app
 
-    # DEFINE CLI COMMANDS
     __new(x::Integer, y::Integer, z::Integer)::Dict = begin
-        BackendApp = backend_init(x, y, z)
-        BackendApp.get_database_info(serialize=false)
-        cluster = BackendApp.get_cluster_info()
+        ref_app = backend_init(x, y, z)
+        ref_app.get_database_info(serialize=false)
+        cluster = ref_app.get_cluster_info()
         Dict(:action => "new", :data => cluster)
     end
 
     __get(id::RecordID)::Dict = begin
-        record, _ = BackendApp.get_record(id)
-        hash = BackendApp.hashing(id)
+        record, _ = ref_app.get_record(id)
+        hash = ref_app.hashing(id)
         result = Dict(:record => record, :hash => hash)
         Dict(:action => "get", :data => result)
     end
 
     __add(number::Integer)::Dict = begin
-        result = BackendApp.add_records(number)
-        BackendApp.get_database_info(serialize=false)
+        result = ref_app.add_records(number)
+        ref_app.get_database_info(serialize=false)
         Dict(:action => "add", :data => result)
     end
 
     __info()::Nothing = begin
-        BackendApp.get_database_info(serialize=false)
-        BackendApp.get_cluster_info(serialize=false)
+        ref_app.get_database_info(serialize=false)
+        ref_app.get_cluster_info(serialize=false)
         nothing
     end
 
     __hash(id::RecordID)::Dict = begin
-        result = BackendApp.hashing(id)
+        result = ref_app.hashing(id)
         Dict(:action => "hash", :data => result)
     end
 
     __fail()::Dict = begin
-        BackendApp.fail_server()
-        cluster = BackendApp.get_cluster_info()
+        ref_app.fail_server()
+        cluster = ref_app.get_cluster_info()
         Dict(:action => "new", :data => cluster)
     end
 
     __help()::Nothing = println(INSTRUCTION)
 
-    commands = [
+    handlers = cli_handler([
         cli_command("new", __new),
         cli_command("get", __get),
         cli_command("add", __add),
@@ -73,61 +68,61 @@ run_cli(ws) = begin
         cli_command("hash", __hash),
         cli_command("fail", __fail),
         cli_command("help", __help),
-    ]
+    ])
 
-    # COMPOSING FUNCTION PIPELINE, JUST LIKE APIS & MIDDLEWARES
-    command_map = Dict((c.name => c) for c=commands)
-    api = cli_handler(command_map)
-
-    guard(input::String) = begin
-        if BackendApp == nothing
-            valid = startswith(input, "new") || startswith(input, "help")
-            input = valid ? input : ""
-            if !valid
-                @warn "BackendApp must be initialized first"
-            end
-        end
-
-        return input
-    end
-
-    broadcast(result::Union{Dict, Nothing}) = begin
+    broadcast(result::Union{Dict, Nothing})::Nothing = begin
         if result isa Dict
             push!(result, :sender => SERVER)
             write(ws, JSON.json(result))
+            @show result
         end
-        return result
+        println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ FINISHED")
     end
 
-    log(result) = begin
-        @show result
-        println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~> Finished")
-    end
-
-    cli_loop(INSTRUCTION, log ∘ broadcast ∘ api ∘ guard)
+    cli_loop(INSTRUCTION, broadcast ∘ handlers)
 end
 
 
-ws_callback = (handler::Function) -> (sender, data, ws, cws) -> begin
+const wscallback = (
+    app::Backend,
+    handler::Function,
+) -> (
+    sender::String,
+    data::Any,
+    ws::HTTP.WebSockets.WebSocket,
+    cws::Dict,
+) -> begin
     client_count_before = length(values(cws))
     handler(sender, data, ws, cws)
     client_count_after = length(values(cws))
 
-    if client_count_after > client_count_before && BackendApp != nothing
+    if client_count_after > client_count_before
         println("New client attached, Foward system info!")
         print("command /")
         data = Dict(
-            :data => BackendApp.get_cluster_info(),
+            :data => app.get_cluster_info(),
             :sender => string(SERVER),
             :action => "new",
         )
         serialized = JSON.json(data)
         write(ws, serialized)
     end
-
 end
 
-make_websocket_server(authenticate, ws_callback(socket_handler))
-make_websocket_client(run_cli)
+
+function ich_exec()::Nothing
+    sample_app = backend_init(10, 3, 3)
+    println("Initializing a sample app")
+    println("- 10 records, 3 cache-servers & 3 virtual node each servers")
+
+    if !haskey(ENV, "COMPILE")
+        make_websocket_server(authenticate, wscallback(sample_app, socket_handler))
+        make_websocket_client(run_cli(sample_app))
+    end
+end
+
+
+ich_exec()
+
 
 end

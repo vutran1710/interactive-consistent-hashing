@@ -50,5 +50,4 @@ socket_handler(sender, data, ws, cws) = begin
         client_wss = values(cws)
         foreach(w -> write(w, data), client_wss)
     end
-
 end
