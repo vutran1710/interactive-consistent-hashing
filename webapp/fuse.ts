@@ -1,13 +1,17 @@
 import { fusebox, pluginSass } from 'fuse-box'
 
+const is_prod = process.env.NODE_ENV == 'prod'
+
 const fuse = fusebox({
   entry: 'index.ts',
   target: 'browser',
   plugins: [pluginSass()],
-  devServer: true,
+  devServer: !is_prod,
   webIndex: {
     template: "index.html",
   },
 })
 
-fuse.runDev()
+const run_mode = is_prod ? 'runProd' : 'runDev'
+
+fuse[run_mode]()
