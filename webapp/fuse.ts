@@ -12,6 +12,6 @@ const fuse = fusebox({
   },
 })
 
-const run_mode = is_prod ? 'runProd' : 'runDev'
+const mode = is_prod ? 'runProd' : 'runDev'
 
-fuse[run_mode]()
+fuse[mode]()

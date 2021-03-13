@@ -14,8 +14,11 @@ const config: SketchConfig = {
 let p5 = undefined
 let factory: NodeFactory = undefined
 
+const ichHost = process.env.ICH_HOST || window.location.hostname
 const canvasContainerID = 'sketch'
-const socket = new WebSocket('ws://localhost:8081')
+const url = "ws://" + ichHost + ":8081"
+console.info("WS Url=", url)
+const socket = new WebSocket(url)
 
 
 socket.onopen = () => {
