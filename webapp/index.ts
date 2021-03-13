@@ -15,7 +15,8 @@ let p5 = undefined
 let factory: NodeFactory = undefined
 
 const canvasContainerID = 'sketch'
-const socket = new WebSocket('ws://localhost:8081')
+const url = "ws://" + window.location.hostname + ":8081"
+const socket = new WebSocket(url)
 
 
 socket.onopen = () => {

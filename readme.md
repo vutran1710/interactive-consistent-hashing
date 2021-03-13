@@ -26,7 +26,7 @@ $ docker build -t ich .
 
 2. Run the bastard! Don't forget to expose websocket port, if you want to enjoy the app visually
 ```shell
-$ docker run -ti -p 8081:8081 ich
+$ docker run -ti -p 4444:4444 -p 8081:8081 ich:latest
 ```
 
 

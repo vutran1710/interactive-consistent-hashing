@@ -4,7 +4,6 @@ COPY lighttpd.conf /etc/lighttpd
 COPY webapp/dist/ /var/www
 COPY system/ /app
 WORKDIR /app
-RUN chmod +x run.sh
 RUN julia -e "using Pkg;Pkg.activate(\".\");Pkg.instantiate();"
 EXPOSE 4444
 EXPOSE 8081
