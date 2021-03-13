@@ -1,7 +1,7 @@
 import { Point } from './src/types'
 import NodeFactory from './src/node_factory'
 import Sketch, { SketchConfig } from './src/sketch'
-
+import './src/styles.scss'
 
 const config: SketchConfig = {
   canvas_width: 800,
