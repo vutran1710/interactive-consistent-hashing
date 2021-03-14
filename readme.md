@@ -9,7 +9,7 @@
 - overall architecture
 
 <p align="center">
-  <img src="images/architecture.jpeg" width="100%">
+  <img src="images/architecture.jpeg" width="60%">
 </p>
 
 - technical breakdown
