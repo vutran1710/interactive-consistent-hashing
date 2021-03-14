@@ -1,5 +1,7 @@
 # Interactive Consistent Hashing
-banner placed
+<p align="center">
+  <img src="images/ich.jpeg" width="100%" title="hover text">
+</p>
 
 ## Introduction
 - How/Why/When/What?
@@ -7,8 +9,15 @@ banner placed
 - overall design
 - technical breakdown
 
+
 ## Running
-#### Option 1: using Docker
+#### Option 1: the no-brainer way
+Pull from docker hub and run it
+```shell
+docker run -ti -p 4444:4444 -p 8081:8081 vutrio/interactive_consistent_hashing
+```
+
+#### Option 2: building manually, using Docker
 If you do not want to bother installing any crappy dependencies to your precious - pure - and clean system, you can run the app within Docker by following:
 - Clone the app
 ```shell
@@ -27,7 +36,8 @@ $ docker run -ti -p 4444:4444 -p 8081:8081 ich:latest
 
 - A sample modelling app will be initialized with 300 records, 3 cache servers and 3 virtual nodes each servers. After initialization finished, open [http://localhost:4444].
 
-#### Option 2: running in development-mode with Julia & NodeJS
+
+#### Option 3: running in development-mode with Julia & NodeJS
 - Installing dependencies
 ```shell
 $ julia --project=.
