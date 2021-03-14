@@ -4,23 +4,36 @@
 </p>
 
 ## Introduction
-- How/Why/When/What?
-- design goal
-- overall architecture
+TBD
 
+## Modelling Architecture
 <p align="center" style="margin:20px auto;">
   <img src="images/architecture.jpeg" width="80%">
 </p>
-
-- technical breakdown
 
 
 ## Running
 #### Option 1: the no-brainer way
 Pull from docker hub and run it
 ```shell
-docker run -ti -p 4444:4444 -p 8081:8081 vutrio/interactive_consistent_hashing
+$ docker run -ti -p 4444:4444 -p 8081:8081 vutrio/interactive_consistent_hashing
 ```
+Wait until the pulling and initial setup finished, showing something like this...
+```shell
+[ ok ] Starting web server: lighttpd.
+-------------------- INTERACTIVE-CONSISTENT-HASHING ----------------------
+Made by VuTran
+@github: vutran1710
+@email: me@vutr.io
+
+Initializing a sample app
+- 300 records, 3 cache-servers & 3 virtual node each servers
+Initializing WS server, binding 0.0.0.0:8081
+...
+command /
+```
+Open http://localhost:4444 to see shit!
+
 
 #### Option 2: building manually, using Docker
 If you do not want to bother installing any crappy dependencies to your precious - pure - and clean system, you can run the app within Docker by following:
