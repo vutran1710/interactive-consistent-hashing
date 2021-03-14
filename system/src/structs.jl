@@ -1,5 +1,3 @@
-using TypedTables: Table
-
 # Type Aliases ==========================================
 Angle = Float64
 ServerID = String

@@ -1,7 +1,3 @@
-using StatsBase: sample
-using UUIDs: uuid1
-
-
 create_cache_servers(number_of_servers::Integer)::Array{CacheServer} = begin
     id() = string(uuid1())[end-5:end]
     create(_) = CacheServer(id(), Dict())

@@ -1,12 +1,7 @@
-using HTTP
-
-const host = get(ENV, "ICH_HOST", "127.0.0.1")
-
-
 make_websocket_server(authenticate::Function, handler::Function) = begin
     cws = Dict()
-    println("Initializing WS server, binding $(host):8081")
-    @async HTTP.WebSockets.listen(host, UInt16(8081)) do ws
+    println("Initializing WS server, binding 0.0.0.0:8081")
+    @async HTTP.WebSockets.listen("0.0.0.0", UInt16(8081)) do ws
         while !eof(ws)
             try
                 data = String(readavailable(ws))
@@ -21,7 +16,7 @@ end
 
 
 make_websocket_client(handler::Function) = begin
-    HTTP.WebSockets.open("ws://$(host):8081") do ws
+    HTTP.WebSockets.open("ws://0.0.0.0:8081") do ws
         handler(ws)
     end
 end

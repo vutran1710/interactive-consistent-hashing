@@ -1,6 +1,3 @@
-using Faker: first_name, last_name
-
-
 row_to_record(r::Row)::Record = Record(r.id, r.name)
 
 

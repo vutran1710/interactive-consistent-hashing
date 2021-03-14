@@ -2,6 +2,12 @@ module main
 using Test
 using Logging
 using JSON
+using StatsBase: sample
+using UUIDs: uuid1
+using Faker: first_name, last_name
+using HTTP
+using TypedTables: Table
+
 
 include("structs.jl")
 include("database.jl")
