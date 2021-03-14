@@ -6,12 +6,20 @@ const fuse = fusebox({
   entry: 'index.ts',
   target: 'browser',
   plugins: [pluginSass()],
+  sourceMap: false,
   devServer: !is_prod,
   webIndex: {
     template: "index.html",
   },
+
 })
 
 const mode = is_prod ? 'runProd' : 'runDev'
 
-fuse[mode]()
+const bundle_config = {
+  bundles: {
+    app: 'app.js'
+  }
+}
+
+fuse[mode](bundle_config)

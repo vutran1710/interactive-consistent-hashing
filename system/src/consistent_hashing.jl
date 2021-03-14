@@ -116,9 +116,9 @@ end
 
 
 function ich_exec()::Nothing
-    sample_app = backend_init(10, 3, 3)
+    sample_app = backend_init(300, 3, 3)
     println("Initializing a sample app")
-    println("- 10 records, 3 cache-servers & 3 virtual node each servers")
+    println("- 300 records, 3 cache-servers & 3 virtual node each servers")
 
     if !haskey(ENV, "COMPILE")
         make_websocket_server(authenticate, wscallback(sample_app, socket_handler))

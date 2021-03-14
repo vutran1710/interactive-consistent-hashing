@@ -1,36 +1,33 @@
 # Interactive Consistent Hashing
 banner placed
 
-## Project Status
-**UNDER ACTIVE DEVELOPMENT**
-
-## Prelude
+## Introduction
 - How/Why/When/What?
-
-## Introdution
 - design goal
 - overall design
 - technical breakdown
 
 ## Running
-### System/Backend
-Written in **Julia**
-
 #### Option 1: using Docker
-If you do not wish to install/use **julia**, you can run the app within Docker by following:
-
-1. Dockerizing the App, tag the image with some name, eg: `ich` (which stands for *Iteractive-Consistent-Hashing*)
+If you do not want to bother installing any crappy dependencies to your precious - pure - and clean system, you can run the app within Docker by following:
+- Clone the app
+```shell
+$ git clone https://github.com/vutran1710/interactive-consistent-hashing
+$ cd <project-dir>
+```
+- Build the App with docker, tag the image with some name, eg: `ich` (which stands for *Iteractive-Consistent-Hashing*)
 ```shell
 $ docker build -t ich .
 ```
 
-2. Run the bastard: expose websocket port and the web-app server's port - if you want to enjoy the app visually
+- Run the App, exposing the websocket port and web-app server's port
 ```shell
 $ docker run -ti -p 4444:4444 -p 8081:8081 ich:latest
 ```
 
+- A sample modelling app will be initialized with 300 records, 3 cache servers and 3 virtual nodes each servers. After initialization finished, open [http://localhost:4444].
 
-#### Option 2: running locally using Julia
+#### Option 2: running in development-mode with Julia & NodeJS
 - Installing dependencies
 ```shell
 $ julia --project=.
@@ -38,15 +35,24 @@ $ julia --project=.
 pkg> dev --local
 ```
 
-
-- Running
+- Running the backend App
 ```shell
 $ julia --project=. src/consistent_hashing.jl
 ```
 
+- Go to `webapp` dir and do the routine work
+```shell
+# project dir
+$ cd webapp/
+$ npm install
+$ npm start
+```
+- Go to http://localhost:4444
 
 ### Usage
-System App provides a simple command-line-interface
+The backend App provides a simple command-line-interface, and the client, when run with default config, will be available at http://localhost:4444
+
+When the client webapp connects to the backend app over web-socket, every change to the system will be forwarded and drawn in the client.
 
 ```shell
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,5 +104,4 @@ System App provides a simple command-line-interface
 	# show this diaglog again
 ============================== !SHOWTIME! ================================
 command /
-
 ```
