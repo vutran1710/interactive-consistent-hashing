@@ -4,17 +4,17 @@ import Sketch, { SketchConfig } from './src/sketch'
 import './src/styles.scss'
 
 const config: SketchConfig = {
-  canvas_width: 800,
-  canvas_height: 800,
-  hashing_ring_origin: Point.from_coord(400, 400),
-  hashing_ring_diameter: 400,
+  canvas_width: 700,
+  canvas_height: 700,
+  hashing_ring_origin: Point.from_coord(350, 350),
+  hashing_ring_diameter: 300,
 }
 
 
 let p5 = undefined
 let factory: NodeFactory = undefined
 
-const ichHost = process.env.ICH_HOST || window.location.hostname
+const ichHost = process.env.HOST || window.location.hostname
 const canvasContainerID = 'sketch'
 const url = "ws://" + ichHost + ":8081"
 console.info("WS Url=", url)
