@@ -35,24 +35,26 @@ command /
 Open http://localhost:4444 to see shit!
 
 
-#### Option 2: building manually, using Docker
-If you do not want to bother installing any crappy dependencies to your precious - pure - and clean system, you can run the app within Docker by following:
-- Clone the app
+#### Option 2: building the App manually with Docker
+If you do not want to bother installing any crappy dependencies to your precious - pure - and clean system, you can build and run the app with Docker by following:
+
+Clone the app
 ```shell
 $ git clone https://github.com/vutran1710/interactive-consistent-hashing
 $ cd <project-dir>
 ```
-- Build the App with docker, tag the image with some name, eg: `ich` (which stands for *Iteractive-Consistent-Hashing*)
+
+Build the App with docker, tag the image with some name, eg: `ich` (which stands for *Iteractive-Consistent-Hashing*)
 ```shell
 $ docker build -t ich .
 ```
 
-- Run the App, exposing the websocket port and web-app server's port
+Run the App, exposing the websocket port and web-app server's port
 ```shell
 $ docker run -ti -p 4444:4444 -p 8081:8081 ich:latest
 ```
 
-- A sample modelling app will be initialized with 300 records, 3 cache servers and 3 virtual nodes each servers. After initialization finished, open [http://localhost:4444].
+A sample modelling app will be initialized with 300 records, 3 cache servers and 3 virtual nodes each servers. After initialization finished, open [http://localhost:4444].
 
 
 #### Option 3: running in development-mode with Julia & NodeJS
