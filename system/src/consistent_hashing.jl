@@ -80,7 +80,6 @@ const run_cli = (app::Backend) -> (ws::HTTP.WebSockets.WebSocket) -> begin
         if result isa Dict
             push!(result, :sender => SERVER)
             write(ws, JSON.json(result))
-            @show result
         end
         println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ FINISHED")
     end
@@ -116,9 +115,9 @@ end
 
 
 function ich_exec()::Nothing
-    sample_app = backend_init(300, 3, 3)
+    sample_app = backend_init(1000, 3, 4)
     println("Initializing a sample app")
-    println("- 300 records, 3 cache-servers & 3 virtual node each servers")
+    println("- 1000 records, 3 cache-servers & 4 virtual node each servers")
 
     if !haskey(ENV, "COMPILE")
         make_websocket_server(authenticate, wscallback(sample_app, socket_handler))

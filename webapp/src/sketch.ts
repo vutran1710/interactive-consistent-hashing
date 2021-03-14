@@ -33,8 +33,8 @@ const Sketch = ({
   }
 
   s.make_circle = redraw(() => {
-    s.strokeWeight(2)
-    s.stroke('#cfd2e6')
+    s.strokeWeight(1)
+    s.stroke('LightSkyBlue')
     s.circle(origin.x, origin.y, diameter)
   })
 

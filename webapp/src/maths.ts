@@ -27,7 +27,7 @@ export const distance = (start: Point, end: Point): number => {
   We have to draw an arc for P5JS to execute with arc() function
  */
 export const make_arc = (start: Point, end: Point, origin: Point, radius: number) => {
-  const r = distance(start, end) * 0.5
+  const r = distance(start, end) / 4
 
   const start_angle = Math.acos((start.x - origin.x) / radius)
   const end_angle = Math.acos((end.x - origin.x) / radius)
