@@ -1,9 +1,16 @@
+import AWN from 'awesome-notifications'
 import { Point } from './src/types'
 import NodeFactory from './src/node_factory'
 import Sketch, { SketchConfig } from './src/sketch'
-import './src/styles.scss'
+import WSclient from './src/ws_client'
 
-const config: SketchConfig = {
+import './src/styles.scss'
+import './src/awn.scss'
+
+
+
+// STATE
+const skt_cfg: SketchConfig = {
   canvas_width: 700,
   canvas_height: 700,
   hashing_ring_origin: Point.from_coord(350, 350),
@@ -13,30 +20,24 @@ const config: SketchConfig = {
 
 let p5 = undefined
 let factory: NodeFactory = undefined
-
-const ichHost = process.env.HOST || window.location.hostname
-const canvasContainerID = 'sketch'
-const url = "ws://" + ichHost + ":8081"
-console.info("WS Url=", url)
-const socket = new WebSocket(url)
+const awn = new AWN({ icons: { enabled: false } })
 
 
-socket.onopen = () => {
-  const msg = { sender: Math.random().toString() }
-  console.log(msg)
-  socket.send(JSON.stringify(msg))
-  p5 = new (window as any).p5(Sketch(config), canvasContainerID)
-  factory = new NodeFactory(config.hashing_ring_origin, config.hashing_ring_diameter)
+
+// ===============================================================
+// SOCKET CALLBACKS
+const open_cb = () => {
+  const canvasContainerID = 'sketch'
+  p5 = new (window as any).p5(Sketch(skt_cfg), canvasContainerID)
+  factory = new NodeFactory(skt_cfg.hashing_ring_origin, skt_cfg.hashing_ring_diameter)
+  awn.success("Connection established")
 }
 
 
-socket.onerror = () => socket.close()
-
-
-socket.onmessage = event => {
+const message_cb = (event: any) => {
   const payload = JSON.parse(event.data)
-  console.log("Received=", payload)
   const { action, data } = payload
+  awn.info(`Receiving \"${action.toUpperCase()}\" Event`)
 
   if (action == "new") {
     p5.clear()
@@ -52,3 +53,14 @@ socket.onmessage = event => {
     p5.draw_arc(points)
   }
 }
+
+
+const error_cb = (timeout: number) => {
+  const msg = `Websocket error! Retry to connect in ${timeout / 1000} seconds`
+  awn.alert(msg)
+}
+
+
+const ich_host = process.env.HOST || window.location.hostname
+const url = "ws://" + ich_host + ":8081"
+new WSclient(url, { open_cb, message_cb, error_cb })
