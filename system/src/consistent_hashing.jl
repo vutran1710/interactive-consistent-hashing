@@ -104,7 +104,6 @@ const wscallback = (
 
     if client_count_after > client_count_before
         println("New client attached, Foward system info!")
-        print("command /")
         data = Dict(
             :data => app.get_cluster_info(),
             :sender => string(SERVER),
