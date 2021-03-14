@@ -26,7 +26,7 @@ $ docker build -t ich .
 
 2. Run the bastard: expose websocket port and the web-app server's port - if you want to enjoy the app visually
 ```shell
-$ docker run -ti -p 4444:4444 -p 8081:8081 -e ICH_HOST=0.0.0.0 ich:latest
+$ docker run -ti -p 4444:4444 -p 8081:8081 ich:latest
 ```
 
 
