@@ -1,5 +1,6 @@
 import { Point } from './types'
 
+
 /*
   Convert an angle(Degrees) to Point A's coordinates(X, Y) in a layout,
   with a given origin O and distance(radius) from the Point A to O
@@ -13,19 +14,24 @@ export const angle_to_coord = (angle: number, radius: number, origin: Point, deg
 
   const x = radius * Math.cos(pi_angle) + origin.x
   const y = radius * Math.sin(pi_angle) + origin.y
-  return Point.from_coord(x, y)
+  return new Point(x, y)
 }
 
+
+/*
+  Distance between two Points
+*/
 export const distance = (start: Point, end: Point): number => {
   const termx = (end.x - start.x) ** 2
   const termy = (end.y - start.y) ** 2
   return (termx + termy) ** 0.5
 }
 
+
 /*
   From 2 points: Start & End, the Origin and the Radius of the Hashing Ring
   We have to draw an arc for P5JS to execute with arc() function
- */
+*/
 export const make_arc = (start: Point, end: Point, origin: Point, radius: number) => {
   const r = distance(start, end) / 4
 
@@ -33,7 +39,7 @@ export const make_arc = (start: Point, end: Point, origin: Point, radius: number
   const end_angle = Math.acos((end.x - origin.x) / radius)
   const mid_angle = (start_angle + end_angle) / 2
 
-  const mid_point = Point.from_coord((start.x + end.x) / 2, (start.y + end.y) / 2)
+  const mid_point = new Point((start.x + end.x) / 2, (start.y + end.y) / 2)
   const arc_center = angle_to_coord(mid_angle, radius + r, origin, false)
 
   if ((mid_point.y - origin.y) / (arc_center.y - origin.y) < 0) {

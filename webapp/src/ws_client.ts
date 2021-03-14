@@ -1,8 +1,4 @@
-export interface WScallbacks {
-  open_cb: Function
-  error_cb: Function
-  message_cb: Function
-}
+import { WScallbacks } from './types'
 
 
 export default class WSclient {

@@ -1,13 +1,5 @@
 import { angle_to_coord, make_arc } from './maths'
-import { Point, Node } from './types'
-
-
-export interface SketchConfig {
-  canvas_width: number
-  canvas_height: number
-  hashing_ring_origin: Point
-  hashing_ring_diameter: number
-}
+import { Point, Node, SketchConfig } from './types'
 
 
 const Sketch = ({
