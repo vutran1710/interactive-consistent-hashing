@@ -1,12 +1,17 @@
 # Interactive Consistent Hashing
 <p align="center">
-  <img src="images/ich.jpeg" width="100%" title="hover text">
+  <img src="images/ich.jpeg" width="100%">
 </p>
 
 ## Introduction
 - How/Why/When/What?
 - design goal
-- overall design
+- overall architecture
+
+<p align="center">
+  <img src="images/architecture.jpeg" width="100%">
+</p>
+
 - technical breakdown
 
 
