@@ -8,8 +8,8 @@
 - design goal
 - overall architecture
 
-<p align="center">
-  <img src="images/architecture.jpeg" width="60%">
+<p align="center" style="margin:20px auto;">
+  <img src="images/architecture.jpeg" width="80%">
 </p>
 
 - technical breakdown
