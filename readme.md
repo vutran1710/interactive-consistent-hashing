@@ -4,7 +4,25 @@
 </p>
 
 ## Introduction
-TBD
+Consistent Hashing is a popular technique used in distributed system and has been detailed and explained in many software-engineering writings, yet there seems to be far fewer implementation examples, let alone interactive ones regarding this concept. Since I currently wanted to try out Julia, I decided to take this matter into my own hand by simulating how a distributed system that applies consistent-hashing works. The idea would be having an interactive app that shows how consistent-hashing works - `visually`.
+
+To have such app that correctly behaves like a distributed architecture, it would lovely to have multiple components that bind together, namely:
+
+- a Persistent Storage, eg Database
+- N cache servers to form a cluster
+- a query-command client
+- regarding visual part - a plotting or drawing component
+
+Modelling a persistent storage - or a database - is simple: just use some DataFrame-like library. I looked around and found `TypedTables`: simple and intuitive apis, good documents. This was certainly the easiest part of the job.
+
+Developing a mock cache-cluster required more manual labors, but also easy. Caching is all about performing key-value look-ups. Few lines of code with the basic `Dict` and `List` would do it. Only a few notable things are:
+- Virtual-server-nodes can be distributed either evenly or randomly over the hashing-ring - depending on however we want it. For the sake of visual-clarity, even-distribution is the default fashion.
+- The hashing function written [here](https://github.com/vutran1710/interactive-consistent-hashing/blob/master/system/src/cache.jl#L53) is quite impractical, since the database is storing record with monotonic, incremental primary keys. In practice, when dealing with monotonic keys, a variation of consistent-hashing is [considered](https://en.wikipedia.org/wiki/Hash_table#Monotonic_keys). For non-number keys, a different hashing function should be used.
+
+A query-command client is needed to interact with the system. It should be able perform storage operations like querying, adding and removing data. To see how consistent-hashing works, a command client should aslo be able to turn off - or failing -servers in cache-cluster. A CLI app would be more than enough to accomplish this task.
+
+While modeling the first 3 components is simple, the visual component is actually a little more complicated. Ideally a plot library written in Julia would be best, yet the compiling and start-up times of libs like gadfly / Juliaplots  make developing with them plainly horrible - especially for a project that requires continuous testing and developing. After many failed attempt, I decided to switch back to Javascript. Well, hand-drawing stuffs is not exactly enjoyable, but not much of a pain in the ass either. The problem is, there must be away for this Javascript app to receive data from the command-client app. Spawning a websocket server is the answer then.
+
 
 ## Modelling Architecture
 <p align="center" style="margin:20px auto;">
@@ -27,7 +45,7 @@ Made by VuTran
 @email: me@vutr.io
 
 Initializing a sample app
-- 300 records, 3 cache-servers & 3 virtual node each servers
+- 1000 records, 3 cache-servers & 4 virtual node each servers
 Initializing WS server, binding 0.0.0.0:8081
 ...
 command /
@@ -36,7 +54,7 @@ Open http://localhost:4444 to see shit!
 
 
 #### Option 2: building the App manually with Docker
-If you do not want to bother installing any crappy dependencies to your precious - pure - and clean system, you can build and run the app with Docker by following:
+You can build and run the app with Docker by following:
 
 Clone the app
 ```shell
@@ -54,7 +72,7 @@ Run the App, exposing the websocket port and web-app server's port
 $ docker run -ti -p 4444:4444 -p 8081:8081 ich:latest
 ```
 
-A sample modelling app will be initialized with 300 records, 3 cache servers and 4 virtual nodes each servers. After initialization finished, open http://localhost:4444.
+A sample modelling app will be initialized with 1000 records, 3 cache servers and 4 virtual nodes each servers. After initialization finished, open http://localhost:4444.
 
 
 #### Option 3: running in development-mode with Julia & NodeJS
