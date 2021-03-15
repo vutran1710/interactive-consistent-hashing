@@ -9,10 +9,10 @@ import './src/styles/index.scss'
 
 
 const cfg: SketchConfig = {
-  canvas_width: 700,
-  canvas_height: 700,
-  hashing_ring_origin: new Point(350, 350),
-  hashing_ring_diameter: 300,
+  canvas_width: 800,
+  canvas_height: 800,
+  hashing_ring_origin: new Point(400, 400),
+  hashing_ring_diameter: 400,
 }
 
 let p5 = undefined
@@ -44,9 +44,9 @@ const ws_cb: WScallbacks = {
     }
 
     if (action == "get") {
-      const points = factory.on_get(data)
-      if (!points.length) return undefined
-      p5.draw_arc(points)
+      const query_point = factory.on_get(data)
+      if (!query_point) return undefined
+      p5.draw_arc(query_point)
     }
   },
 

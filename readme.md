@@ -54,7 +54,7 @@ Run the App, exposing the websocket port and web-app server's port
 $ docker run -ti -p 4444:4444 -p 8081:8081 ich:latest
 ```
 
-A sample modelling app will be initialized with 300 records, 3 cache servers and 3 virtual nodes each servers. After initialization finished, open http://localhost:4444.
+A sample modelling app will be initialized with 300 records, 3 cache servers and 4 virtual nodes each servers. After initialization finished, open http://localhost:4444.
 
 
 #### Option 3: running in development-mode with Julia & NodeJS

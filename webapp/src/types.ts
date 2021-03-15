@@ -53,6 +53,14 @@ export class Node {
 }
 
 
+export interface QueryPoint {
+  angle: number
+  point: Point
+  cache: Point
+  name: string
+}
+
+
 export interface SketchConfig {
   canvas_width: number
   canvas_height: number

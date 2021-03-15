@@ -1,5 +1,5 @@
 import distinctColors from 'distinct-colors'
-import { GetRecordData, HashObject, Point, Node } from './types'
+import { GetRecordData, HashObject, Point, Node, QueryPoint } from './types'
 import { angle_to_coord } from './maths'
 
 
@@ -36,11 +36,12 @@ export default class NodeFactory {
     })
   }
 
-  on_get(data: GetRecordData): Array<Point> {
-    if (!data.record) return []
+  on_get(data: GetRecordData): QueryPoint {
+    if (!data.record) return undefined
     const hash_data = new HashObject(data.hash)
-    const record_point = angle_to_coord(hash_data.hashed, this.radius, this.origin)
-    const cache_point = angle_to_coord(hash_data.cache_angle, this.radius, this.origin)
-    return [record_point, cache_point]
+    const name = data.record.name
+    const point = angle_to_coord(hash_data.hashed, this.radius, this.origin)
+    const cache = angle_to_coord(hash_data.cache_angle, this.radius, this.origin)
+    return { point, cache, name, angle: hash_data.hashed }
   }
 }

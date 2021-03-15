@@ -1,5 +1,5 @@
 import { angle_to_coord, make_arc } from './maths'
-import { Point, Node, SketchConfig } from './types'
+import { Node, QueryPoint, SketchConfig } from './types'
 
 
 const Sketch = ({
@@ -10,6 +10,7 @@ const Sketch = ({
 }: SketchConfig) => (s: any) => {
 
   const circumference = Math.PI * diameter
+  const radius = diameter / 2
 
   s.setup = () => {
     s.createCanvas(canvas_height, canvas_width)
@@ -31,7 +32,6 @@ const Sketch = ({
   })
 
   s.pin_points = redraw((nodes: Node[]) => {
-    const radius = diameter / 2
     const online_node_d = Math.min(circumference / (3 * nodes.length), 20)
     const offline_node_d = Math.min(circumference / (4 * nodes.length), online_node_d)
 
@@ -58,14 +58,20 @@ const Sketch = ({
     })
   })
 
-  s.draw_arc = redraw((points: Point[]) => {
+  s.draw_arc = redraw((p: QueryPoint) => {
     // start-point
-    const record = points[0]
+    const record = p.point
     s.stroke('red')
     s.strokeWeight(10)
     s.point(record.x, record.y)
+    // label
+    const name_point = angle_to_coord(p.angle, radius - 30, origin)
+    s.fill('IndianRed')
+    s.stroke(0, 0, 0, 0)
+    s.textAlign(s.CENTER)
+    s.text(p.name, name_point.x, name_point.y)
     // cache-point
-    const cache = points[1]
+    const cache = p.cache
     s.stroke('royalblue')
     s.strokeWeight(10)
     s.point(cache.x, cache.y)
